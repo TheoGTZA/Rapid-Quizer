@@ -17,9 +17,8 @@ public class Categories {
     private String libelle;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "categorie_sup", nullable = false)
+    @JoinColumn(name = "categorie_sup", nullable = true)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonIgnore
     private Categories categorie_sup;
-
 }

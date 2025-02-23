@@ -10,8 +10,8 @@ import org.hibernate.annotations.OnDeleteAction;
 @IdClass(ReponsesId.class)
 public class Reponses {
 
-    @Id
-    private Long reponse_id;
+    @EmbeddedId
+    private ReponsesId reponse_id;
 
     @Id
     @ManyToOne(fetch = FetchType.LAZY)
