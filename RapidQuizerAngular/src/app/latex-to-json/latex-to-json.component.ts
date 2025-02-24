@@ -10,23 +10,31 @@ export class LatexToJsonComponent {
 
   getFile(event: any) {
     this.file = event.target.files[0];
-    console.log(this.file);
+    console.log('File selected:', this.file);
   }
 
-  //Pas le bakc end donc fonctionne pas
-  /*async uploadFile() {
+  async uploadFile() {
+    if (!this.file) {
+      console.error('No file selected');
+      return;
+    }
+
     let formData = new FormData();
-    formData.set('file', this.file);
+    formData.append('file', this.file);
+
+    console.log('FormData content:', formData.get('file'));
 
     try {
-      const response = await fetch('http://localhost:3000/upload', {
+      const response = await fetch('/upload', { // On utilise /upload au lieu de http://localhost:8080/upload car on est dans le même serveur(proxy.conf.json)
         method: 'POST',
-        body: formData
+        body: formData,
       });
+
+      console.log('Response status:', response.status);
       const result = await response.json();
-      console.log(result);
+      console.log('Response JSON:', result);
     } catch (error) {
       console.error('Error uploading file:', error);
     }
-  }*/
+  }
 }
