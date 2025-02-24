@@ -60,7 +60,7 @@ public class FileUploadController {
             return "File uploaded and data saved successfully";
         } catch (Exception e) {
             e.printStackTrace();
-            return "Error processing file";
+            return "Error processing file" + e.getMessage();
         }
     }
 }

@@ -12,6 +12,7 @@ public class Question {
     private Long id;
 
     @Setter
+    @Column(length = 10000)
     private String text;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)

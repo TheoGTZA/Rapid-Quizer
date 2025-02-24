@@ -30,8 +30,13 @@ export class LatexToJsonComponent {
         body: formData,
       });
 
-      console.log('Response status:', response.status);
-      const result = await response.json();
+      const contentType = response.headers.get('Content-Type');
+      let result;
+      if (contentType && contentType.includes('application/json')) {
+        result = await response.json();
+      } else {
+        result = await response.text();
+      }
       console.log('Response JSON:', result);
     } catch (error) {
       console.error('Error uploading file:', error);

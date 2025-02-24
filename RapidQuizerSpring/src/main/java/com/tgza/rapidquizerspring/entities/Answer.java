@@ -1,9 +1,6 @@
 package com.tgza.rapidquizerspring.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Setter;
 
 @Entity
@@ -13,6 +10,7 @@ public class Answer {
     private Long id;
 
     @Setter
+    @Column(length = 10000)
     private String text;
 
     @Setter
