@@ -1,5 +1,8 @@
-import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
+import { BrowserModule } from '@angular/platform-browser';
+import { CommonModule } from '@angular/common'; 
+import { FormsModule } from '@angular/forms';
+import { HttpClientModule } from '@angular/common/http'; 
 
 import { AppComponent } from './app.component';
 import { LatexToJsonComponent } from './latex-to-json/latex-to-json.component';
@@ -10,7 +13,10 @@ import { LatexToJsonComponent } from './latex-to-json/latex-to-json.component';
     LatexToJsonComponent
   ],
   imports: [
-    BrowserModule
+    BrowserModule,
+    CommonModule, 
+    FormsModule, 
+    HttpClientModule
   ],
   providers: [],
   bootstrap: [AppComponent]

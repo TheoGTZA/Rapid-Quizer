@@ -1,7 +1,9 @@
 package com.tgza.rapidquizerspring.controllers;
 
 import com.tgza.rapidquizerspring.entities.Answer;
+import com.tgza.rapidquizerspring.entities.Category;
 import com.tgza.rapidquizerspring.entities.Question;
+import com.tgza.rapidquizerspring.repositories.CategoryRepository;
 import com.tgza.rapidquizerspring.repositories.QuestionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -21,9 +23,12 @@ public class FileUploadController {
     @Autowired
     private QuestionRepository questionRepository;
 
+    @Autowired
+    private CategoryRepository categoryRepository;
+
     @PostMapping
     @CrossOrigin(origins = "http://localhost:4200")
-    public String handleFileUpload(@RequestParam("file") MultipartFile file) {
+    public String handleFileUpload(@RequestParam("file") MultipartFile file, @RequestParam("category") Long categoryId ) {
         try {
             BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream()));
             StringBuilder content = new StringBuilder();
@@ -59,8 +64,10 @@ public class FileUploadController {
                 answers.add(answer);
             }
 
+            Category category = categoryRepository.findById(categoryId).orElseThrow(() -> new RuntimeException("Category not found"));
 
             question.setAnswers(answers);
+            question.setCategory(category);
             questionRepository.save(question);
 
             return "File uploaded and data saved successfully";

@@ -1,12 +1,31 @@
+import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { Component } from '@angular/core';
+import { NgIf, NgFor } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-latex-to-json',
   templateUrl: './latex-to-json.component.html',
-  styleUrls: ['./latex-to-json.component.css']
+  styleUrls: ['./latex-to-json.component.css'],
+  imports: [NgIf, NgFor, FormsModule, HttpClientModule]
 })
 export class LatexToJsonComponent {
   file: any;
+  categories: any[] = [];
+  selectedCategory: number;
+
+  
+  constructor(private http: HttpClient) {}
+
+  ngOnInit() {
+    this.loadCategories();
+  }
+
+  loadCategories() {
+    this.http.get('/categories').subscribe((data: any[]) => {
+      this.categories = data;
+    });
+  }
 
   getFile(event: any) {
     this.file = event.target.files[0];
@@ -19,8 +38,14 @@ export class LatexToJsonComponent {
       return;
     }
 
+    if (!this.selectedCategory) {
+      console.error('No category selected');
+      return;
+    }
+
     let formData = new FormData();
     formData.append('file', this.file);
+    formData.append('category', this.selectedCategory.toString());
 
     console.log('FormData content:', formData.get('file'));
 

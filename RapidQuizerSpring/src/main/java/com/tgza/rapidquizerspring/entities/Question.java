@@ -19,5 +19,8 @@ public class Question {
     @Setter
     private List<Answer> answers;
 
-
+    @ManyToOne
+    @JoinColumn(name = "category_id")
+    @Setter
+    private Category category;
 }
