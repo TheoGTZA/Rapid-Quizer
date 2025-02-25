@@ -15,7 +15,7 @@ public class Question {
     @Column(length = 10000)
     private String text;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "question",cascade = CascadeType.ALL, orphanRemoval = true)
     @Setter
     private List<Answer> answers;
 

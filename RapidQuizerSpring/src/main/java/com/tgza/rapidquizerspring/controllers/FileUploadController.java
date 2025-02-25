@@ -43,17 +43,23 @@ public class FileUploadController {
 
             String[] answerLines = answersText.split("\n");
             List<Answer> answers = new ArrayList<>();
+            Question question = new Question();
+            question.setText(questionText);
+            questionRepository.save(question);
             for (String answerLine : answerLines) {
+                if (answerLine.trim().isEmpty()) {
+                    continue;
+                }
                 boolean isCorrect = answerLine.startsWith("\\bonne");
                 String answerText = answerLine.replaceAll("\\\\(bonne|mauvaise)\\{(.*?)\\}", "$2").trim();
                 Answer answer = new Answer();
                 answer.setText(answerText);
                 answer.setCorrect(isCorrect);
+                answer.setQuestion(question);
                 answers.add(answer);
             }
 
-            Question question = new Question();
-            question.setText(questionText);
+
             question.setAnswers(answers);
             questionRepository.save(question);
 

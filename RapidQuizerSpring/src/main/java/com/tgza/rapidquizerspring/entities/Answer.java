@@ -10,10 +10,14 @@ public class Answer {
     private Long id;
 
     @Setter
-    @Column(length = 10000)
     private String text;
 
     @Setter
     private boolean isCorrect;
+
+    @ManyToOne
+    @JoinColumn(name = "question_id")
+    @Setter
+    private Question question;
 
 }
