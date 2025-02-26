@@ -17,7 +17,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @RestController
-@RequestMapping("/upload")
+@RequestMapping("/api")
+@CrossOrigin(origins = "http://localhost:4200")
 public class FileUploadController {
 
     @Autowired
@@ -26,8 +27,7 @@ public class FileUploadController {
     @Autowired
     private CategoryRepository categoryRepository;
 
-    @PostMapping
-    @CrossOrigin(origins = "http://localhost:4200")
+    @PostMapping("/upload")
     public String handleFileUpload(@RequestParam("file") MultipartFile file, @RequestParam("category") Long categoryId ) {
         try {
             BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream()));

@@ -10,19 +10,19 @@ import java.util.List;
 public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Getter
+    @Setter
     private Long id;
 
-    @Setter
     @Getter
+    @Setter
     private String name;
 
     @ManyToOne
     @JoinColumn(name = "parent_id")
+    @Getter
+    @Setter
     private Category parent;
 
-    @OneToMany(mappedBy = "parent")
-    private List<Category> subcategories;
 
-    @OneToMany(mappedBy = "category")
-    private List<Question> questions;
 }

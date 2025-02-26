@@ -1,19 +1,28 @@
-import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { HttpClient, HttpClientModule, HttpHeaders } from '@angular/common/http';
 import { Component } from '@angular/core';
-import { NgIf, NgFor } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Category } from '../models/category';
+import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-latex-to-json',
   templateUrl: './latex-to-json.component.html',
   styleUrls: ['./latex-to-json.component.css'],
-  imports: [NgIf, NgFor, FormsModule, HttpClientModule]
+  imports: [FormsModule, HttpClientModule],
 })
 export class LatexToJsonComponent {
   file: any;
   categories: any[] = [];
   selectedCategory: number;
+  newCategory: { name: string; parentId: number | null } = { name: '', parentId: null };
 
+  
+  private httpOptions = {
+    headers: new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Accept': 'application/json'
+    })
+  };
   
   constructor(private http: HttpClient) {}
 
@@ -22,10 +31,17 @@ export class LatexToJsonComponent {
   }
 
   loadCategories() {
-    this.http.get('/categories').subscribe((data: any[]) => {
-      this.categories = data;
+    this.http.get<Category[]>('/api/categories', this.httpOptions).subscribe({
+      next: (data: Category[]) => {
+        console.log('Categories loaded:', data);
+        this.categories = data;
+      },
+      error: (error) => {
+        console.error('Error loading categories:', error);
+      }
     });
   }
+
 
   getFile(event: any) {
     this.file = event.target.files[0];
@@ -33,28 +49,28 @@ export class LatexToJsonComponent {
   }
 
   async uploadFile() {
-    if (!this.file) {
-      console.error('No file selected');
+    if (!this.file || !this.selectedCategory) {
+      console.error('File and category are required');
       return;
     }
-
+  
     if (!this.selectedCategory) {
       console.error('No category selected');
       return;
     }
-
+  
     let formData = new FormData();
     formData.append('file', this.file);
     formData.append('category', this.selectedCategory.toString());
-
+  
     console.log('FormData content:', formData.get('file'));
-
+  
     try {
-      const response = await fetch('/upload', { // On utilise /upload au lieu de http://localhost:8080/upload car on est dans le même serveur(proxy.conf.json)
+      const response = await fetch('/api/upload', {
         method: 'POST',
         body: formData,
       });
-
+  
       const contentType = response.headers.get('Content-Type');
       let result;
       if (contentType && contentType.includes('application/json')) {
@@ -67,4 +83,31 @@ export class LatexToJsonComponent {
       console.error('Error uploading file:', error);
     }
   }
+
+  async createCategory(): Promise<void> {
+    if (!this.newCategory.name) {
+      console.error('Category name is required');
+      return;
+    }
+  
+    try {
+      const categoryToCreate = {
+        name: this.newCategory.name,
+        parent: this.newCategory.parentId ? { id: this.newCategory.parentId } : null
+      };
+  
+      console.log('Sending category:', categoryToCreate); // Pour déboguer
+  
+      const response = await firstValueFrom(
+        this.http.post<Category>('/api/categories', categoryToCreate, this.httpOptions)
+      );
+      
+      console.log('Category created:', response);
+      await this.loadCategories();
+      this.newCategory = { name: '', parentId: null };
+    } catch (error) {
+      console.error('Error creating category:', error);
+    }
+  }
+
 }
