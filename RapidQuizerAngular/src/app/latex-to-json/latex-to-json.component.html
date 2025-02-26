@@ -1,9 +1,18 @@
-<div class="file-container" ngIf="!file">
+<div class="file-container">
+  @if (!file) {
   <input type="file" (change)="getFile($event)" class="file" />
+  <select [(ngModel)]="selectedCategory">
+    @for (category of categories; track category.id) {
+    <option [value]="category.id">{{ category.name }}</option>
+    }
+  </select>
+  } @if (file) {
+  <div>
+    File name: {{ file?.name }}
+    <br />
+    <button (click)="file = undefined">clear file</button>
+  </div>
+  }
 </div>
-<div ngIf="file">
-  File name: {{ file?.name }} <br />
-  <button (click)="file = undefined">clear file beuteu</button>
-</div>
-<br />
+
 <button (click)="uploadFile()">upload file</button>
