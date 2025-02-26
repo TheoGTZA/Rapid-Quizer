@@ -44,8 +44,16 @@ export class LatexToJsonComponent {
 
 
   getFile(event: any) {
-    this.file = event.target.files[0];
+    let fileDrop = event.target.files[0];
     console.log('File selected:', this.file);
+
+    const file_ext: string = fileDrop.name.split('.')[fileDrop.name.split('.').length-1];
+    if(file_ext == "tex") {
+      this.file = fileDrop;
+    }
+    else {
+      console.error("Le fichier n'est pas au format LaTeX !");
+    }
   }
 
   async uploadFile() {
