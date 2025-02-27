@@ -20,7 +20,6 @@ import java.util.regex.Pattern;
 @RequestMapping("/api")
 @CrossOrigin(origins = "http://localhost:4200")
 public class FileUploadController {
-
     @Autowired
     private QuestionRepository questionRepository;
 
@@ -28,7 +27,7 @@ public class FileUploadController {
     private CategoryRepository categoryRepository;
 
     @PostMapping("/upload")
-    public String handleFileUpload(@RequestParam("file") MultipartFile file, @RequestParam("category") Long categoryId ) {
+    public String handleFileUpload(@RequestParam("file") MultipartFile file, @RequestParam("category") Long categoryId) {
         try {
             BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream()));
             StringBuilder content = new StringBuilder();
@@ -46,17 +45,22 @@ public class FileUploadController {
             Matcher answersMatcher = answersPattern.matcher(latexContent);
             String answersText = answersMatcher.find() ? answersMatcher.group(1).trim() : "";
 
-            String[] answerLines = answersText.split("\n");
-            List<Answer> answers = new ArrayList<>();
             Question question = new Question();
             question.setText(questionText);
             questionRepository.save(question);
-            for (String answerLine : answerLines) {
-                if (answerLine.trim().isEmpty()) {
-                    continue;
-                }
-                boolean isCorrect = answerLine.startsWith("\\bonne");
-                String answerText = answerLine.replaceAll("\\\\(bonne|mauvaise)\\{(.*?)\\}", "$2").trim();
+            
+            Pattern singleAnswerPattern = Pattern.compile("\\\\(bonne|mauvaise)\\{([^}]+)\\}", Pattern.DOTALL);
+            Matcher singleAnswerMatcher = singleAnswerPattern.matcher(answersText);
+
+            List<Answer> answers = new ArrayList<>();
+
+            while (singleAnswerMatcher.find()) {
+                boolean isCorrect = singleAnswerMatcher.group(1).equals("bonne");
+                String answerText = singleAnswerMatcher.group(2)
+                        .replaceAll("\\r\\n|\\r|\\n", " ")  // Remplace les sauts de ligne par des espaces
+                        .replaceAll("\\s+", " ")            // Normalise les espaces multiples
+                        .trim();
+
                 Answer answer = new Answer();
                 answer.setText(answerText);
                 answer.setCorrect(isCorrect);
@@ -64,7 +68,8 @@ public class FileUploadController {
                 answers.add(answer);
             }
 
-            Category category = categoryRepository.findById(categoryId).orElseThrow(() -> new RuntimeException("Category not found"));
+            Category category = categoryRepository.findById(categoryId)
+                    .orElseThrow(() -> new RuntimeException("Category not found"));
 
             question.setAnswers(answers);
             question.setCategory(category);
@@ -73,7 +78,7 @@ public class FileUploadController {
             return "File uploaded and data saved successfully";
         } catch (Exception e) {
             e.printStackTrace();
-            return "Error processing file" + e.getMessage();
+            return "Error processing file: " + e.getMessage();
         }
     }
 }

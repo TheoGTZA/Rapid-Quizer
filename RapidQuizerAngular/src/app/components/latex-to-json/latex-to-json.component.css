@@ -36,3 +36,12 @@
 .category-form button:hover {
   background-color: #45a049;
 }
+
+.error-message {
+  color: #dc3545;
+  margin-top: 0.5rem;
+  padding: 0.5rem;
+  border-radius: 4px;
+  background-color: #f8d7da;
+  border: 1px solid #f5c6cb;
+}

@@ -1,23 +1,26 @@
 package com.tgza.rapidquizerspring.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
+import lombok.Getter;
 import lombok.Setter;
 
+
+@Getter
+@Setter
 @Entity
 public class Answer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Setter
     private String text;
 
-    @Setter
     private boolean isCorrect;
 
+    @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "question_id")
-    @Setter
     private Question question;
 
 }

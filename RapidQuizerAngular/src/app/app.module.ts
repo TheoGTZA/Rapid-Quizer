@@ -6,12 +6,14 @@ import { HttpClientModule } from '@angular/common/http';
 import { AppRoutingModule } from './app-routing.module'; 
 
 import { AppComponent } from './app.component';
-import { LatexToJsonComponent } from './latex-to-json/latex-to-json.component';
+import { LatexToJsonComponent } from './components/latex-to-json/latex-to-json.component';
+import { NavbarComponent } from './components/navbar/navbar.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    LatexToJsonComponent
+    LatexToJsonComponent,
+    NavbarComponent
   ],
   imports: [
     BrowserModule,

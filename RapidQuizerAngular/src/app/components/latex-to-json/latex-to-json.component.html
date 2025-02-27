@@ -17,6 +17,9 @@
 <div class="file-container">
   @if (!file) {
   <input type="file" (change)="getFile($event)" class="file" />
+  @if (fileError) {
+  <div class="error-message">{{ fileError }}</div>
+  }
   <select [(ngModel)]="selectedCategory">
     @for (category of categories; track category.id) {
     <option [value]="category.id">{{ category.name }}</option>

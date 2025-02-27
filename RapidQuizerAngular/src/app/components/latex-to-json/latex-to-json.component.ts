@@ -1,7 +1,7 @@
 import { HttpClient, HttpClientModule, HttpHeaders } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Category } from '../models/category';
+import { Category } from '../../models/category';
 import { firstValueFrom } from 'rxjs';
 
 @Component({
@@ -15,6 +15,7 @@ export class LatexToJsonComponent {
   categories: any[] = [];
   selectedCategory: number;
   newCategory: { name: string; parentId: number | null } = { name: '', parentId: null };
+  fileError: string | null = null;
 
   
   private httpOptions = {
@@ -50,8 +51,10 @@ export class LatexToJsonComponent {
     const file_ext: string = fileDrop.name.split('.')[fileDrop.name.split('.').length-1];
     if(file_ext == "tex") {
       this.file = fileDrop;
+      this.fileError = null;
     }
     else {
+      this.fileError = "Le fichier doit être au format LaTeX (.tex)";
       console.error("Le fichier n'est pas au format LaTeX !");
     }
   }
@@ -87,6 +90,12 @@ export class LatexToJsonComponent {
         result = await response.text();
       }
       console.log('Response JSON:', result);
+
+      if (response.ok) {
+        this.file = undefined;
+        console.log('File cleared after successful upload');
+      }
+
     } catch (error) {
       console.error('Error uploading file:', error);
     }
