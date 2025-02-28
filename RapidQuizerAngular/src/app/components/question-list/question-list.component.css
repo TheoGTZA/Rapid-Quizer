@@ -1,50 +1,68 @@
 .card {
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    border-radius: 8px;
-    margin-bottom: 1.5rem;
-    border: none;
-}
-
-.card-body {
+    max-width: 100%;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    word-break: break-word;
+  }
+  
+  .card-body {
     padding: 1.5rem;
-}
-
-.card-title {
+  }
+  
+  .card-title {
     color: #1a237e;
     font-weight: 600;
-    font-size: 1.25rem;
+    font-size: 1.1rem;  /* Réduction de la taille de police */
     margin-bottom: 1rem;
     padding-bottom: 0.75rem;
     border-bottom: 2px solid #e8eaf6;
-}
-
-.answers-list {
-    margin-top: 1.5rem;
-    padding-left: 1rem;
-}
-
-.answer-item {
+  }
+  
+  .math {
+    display: inline-block;
+    max-width: 100%;
+    overflow-x: auto;
+    padding: 0.5rem 0;
+  }
+  
+  .katex-display {
+    overflow-x: auto;
+    overflow-y: hidden;
+    max-width: 100%;
+    padding: 0.5rem 0;
+  }
+  
+  .answer-item {
     padding: 0.6rem 1rem;
     margin-bottom: 0.5rem;
     background-color: #f8f9fa;
     border: 1px solid #dee2e6;
     border-radius: 6px;
     display: flex;
-    align-items: center;
-    transition: background-color 0.2s ease;
-}
+    align-items: flex-start;  /* Changé de center à flex-start */
+    flex-wrap: wrap;          /* Permet le retour à la ligne */
+    gap: 0.5rem;             /* Espace entre les éléments */
+  }
+  
+  .answer-marker {
+    flex-shrink: 0;          /* Empêche la compression du marqueur */
+    margin-right: 10px;
+    font-weight: bold;
+  }
 
+  
 .correct-answer {
     background-color: #e8f5e9;
     border-color: #c8e6c9;
     color: #2e7d32;
 }
 
-.answer-marker {
-    margin-right: 10px;
-    font-weight: bold;
-}
-
 .correct-answer .answer-marker {
     color: #2e7d32;
 }
+  
+  .answer-text {
+    flex: 1;
+    min-width: 0;           /* Permet la réduction en dessous de la taille du contenu */
+    word-break: break-word;
+  }

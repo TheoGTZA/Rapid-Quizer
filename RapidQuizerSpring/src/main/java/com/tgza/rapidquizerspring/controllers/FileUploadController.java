@@ -37,26 +37,33 @@ public class FileUploadController {
             }
 
             String latexContent = content.toString();
-            Pattern questionPattern = Pattern.compile("\\\\begin\\{questionmult\\}\\{.*?\\}\\s*(.*?)\\s*\\\\begin\\{reponses\\}", Pattern.DOTALL);
+            Pattern questionPattern = Pattern.compile(
+                    "\\\\begin\\{questionmult\\}\\{.*?\\}\\s*(.*?)\\s*\\\\begin\\{(choices|reponses)\\}",
+                    Pattern.DOTALL
+            );
             Matcher questionMatcher = questionPattern.matcher(latexContent);
             String questionText = questionMatcher.find() ? questionMatcher.group(1).trim() : "";
 
-            Pattern answersPattern = Pattern.compile("\\\\begin\\{reponses\\}\\s*(.*?)\\s*\\\\end\\{reponses\\}", Pattern.DOTALL);
+
+            Pattern answersPattern = Pattern.compile("\\\\begin\\{(reponses|choices)\\}\\s*(.*?)\\s*\\\\end\\{(reponses|choices)\\}", Pattern.DOTALL);
             Matcher answersMatcher = answersPattern.matcher(latexContent);
-            String answersText = answersMatcher.find() ? answersMatcher.group(1).trim() : "";
+            String answersText = answersMatcher.find() ? answersMatcher.group(2).trim() : "";
 
             Question question = new Question();
             question.setText(questionText);
             questionRepository.save(question);
-            
-            Pattern singleAnswerPattern = Pattern.compile("\\\\(bonne|mauvaise)\\{([^}]+)\\}", Pattern.DOTALL);
+
+            Pattern singleAnswerPattern = Pattern.compile("\\\\(bonne|mauvaise)\\{([^{}]|\\{[^{}]*\\})*\\}", Pattern.DOTALL);
             Matcher singleAnswerMatcher = singleAnswerPattern.matcher(answersText);
 
             List<Answer> answers = new ArrayList<>();
 
             while (singleAnswerMatcher.find()) {
-                boolean isCorrect = singleAnswerMatcher.group(1).equals("bonne");
-                String answerText = singleAnswerMatcher.group(2)
+                String fullMatch = singleAnswerMatcher.group(0);
+                boolean isCorrect = fullMatch.startsWith("\\bonne");
+
+                // Extrait le contenu entre les accolades externes
+                String answerText = fullMatch.substring(fullMatch.indexOf("{") + 1, fullMatch.lastIndexOf("}"))
                         .replaceAll("\\r\\n|\\r|\\n", " ")  // Remplace les sauts de ligne par des espaces
                         .replaceAll("\\s+", " ")            // Normalise les espaces multiples
                         .trim();
