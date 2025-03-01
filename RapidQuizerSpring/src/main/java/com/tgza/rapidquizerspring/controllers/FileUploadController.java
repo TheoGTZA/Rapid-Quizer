@@ -37,36 +37,41 @@ public class FileUploadController {
             }
 
             String latexContent = content.toString();
+
+            // Pattern amélioré pour capturer la question jusqu'au début des réponses
             Pattern questionPattern = Pattern.compile(
-                    "\\\\begin\\{questionmult\\}\\{.*?\\}\\s*(.*?)\\s*\\\\begin\\{(choices|reponses)\\}",
+                    "\\\\begin\\{questionmult\\}\\{.*?\\}\\s*(.*?)\\s*\\\\begin\\{(reponses|choices)\\}",
                     Pattern.DOTALL
             );
             Matcher questionMatcher = questionPattern.matcher(latexContent);
             String questionText = questionMatcher.find() ? questionMatcher.group(1).trim() : "";
 
-
-            Pattern answersPattern = Pattern.compile("\\\\begin\\{(reponses|choices)\\}\\s*(.*?)\\s*\\\\end\\{(reponses|choices)\\}", Pattern.DOTALL);
+            // Pattern pour capturer la section des réponses (supporte les deux formats)
+            Pattern answersPattern = Pattern.compile(
+                    "\\\\begin\\{(reponses|choices)\\}\\s*(.*?)\\s*\\\\end\\{(reponses|choices)\\}",
+                    Pattern.DOTALL
+            );
             Matcher answersMatcher = answersPattern.matcher(latexContent);
             String answersText = answersMatcher.find() ? answersMatcher.group(2).trim() : "";
 
             Question question = new Question();
             question.setText(questionText);
-            questionRepository.save(question);
 
-            Pattern singleAnswerPattern = Pattern.compile("\\\\(bonne|mauvaise)\\{([^{}]|\\{[^{}]*\\})*\\}", Pattern.DOTALL);
+            // Pattern amélioré pour les réponses individuelles (supporte les deux formats)
+            Pattern singleAnswerPattern = Pattern.compile(
+                    "\\\\(bonne|mauvaise|correctchoice|wrongchoice)\\{([^{}]|\\{[^{}]*\\})*\\}",
+                    Pattern.DOTALL
+            );
             Matcher singleAnswerMatcher = singleAnswerPattern.matcher(answersText);
 
             List<Answer> answers = new ArrayList<>();
 
             while (singleAnswerMatcher.find()) {
                 String fullMatch = singleAnswerMatcher.group(0);
-                boolean isCorrect = fullMatch.startsWith("\\bonne");
+                boolean isCorrect = fullMatch.startsWith("\\bonne") || fullMatch.startsWith("\\correctchoice");
 
-                // Extrait le contenu entre les accolades externes
-                String answerText = fullMatch.substring(fullMatch.indexOf("{") + 1, fullMatch.lastIndexOf("}"))
-                        .replaceAll("\\r\\n|\\r|\\n", " ")  // Remplace les sauts de ligne par des espaces
-                        .replaceAll("\\s+", " ")            // Normalise les espaces multiples
-                        .trim();
+                // Extraction améliorée du contenu
+                String answerText = extractLatexContent(fullMatch);
 
                 Answer answer = new Answer();
                 answer.setText(answerText);
@@ -87,5 +92,18 @@ public class FileUploadController {
             e.printStackTrace();
             return "Error processing file: " + e.getMessage();
         }
+    }
+
+    private String extractLatexContent(String latex) {
+        // Extrait le contenu entre les accolades externes
+        int start = latex.indexOf("{") + 1;
+        int end = latex.lastIndexOf("}");
+        if (start >= 0 && end >= 0) {
+            return latex.substring(start, end)
+                    .replaceAll("\\r\\n|\\r|\\n", " ")  // Normalise les sauts de ligne
+                    .replaceAll("\\s+", " ")            // Normalise les espaces
+                    .trim();
+        }
+        return "";
     }
 }

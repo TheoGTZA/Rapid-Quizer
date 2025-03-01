@@ -10,18 +10,21 @@
     </div>
   </div>
 
-  <div class="row">
+  <!-- Add loading spinner here -->
+  <div *ngIf="loading" class="text-center">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+
+  <!-- Wrap existing content with visibility control -->
+  <div class="row" [style.visibility]="loading ? 'hidden' : 'visible'">
     <div class="col-md-12">
       <div *ngFor="let question of getFilteredQuestions()" class="card mb-3">
         <div class="card-body">
           <h5 class="card-title">
-            <div class="math">{{ question.text }}</div>
+            <div [innerHTML]="cleanLatex(question.text)" class="math"></div>
           </h5>
-          <p class="card-text">
-            <small class="text-muted">
-              Catégorie: {{ question.category?.name }}
-            </small>
-          </p>
           <div class="answers-list">
             <div
               *ngFor="let answer of question.answers"
@@ -31,7 +34,7 @@
               <span class="answer-marker">{{
                 answer.correct ? "✓" : "•"
               }}</span>
-              <span class="math">{{ answer.text }}</span>
+              <div [innerHTML]="cleanLatex(answer.text)" class="math"></div>
             </div>
           </div>
         </div>
