@@ -1,13 +1,30 @@
-import { Component } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-navbar',
-  imports: [RouterModule, CommonModule],
+  standalone: true,
+  imports: [CommonModule, RouterModule, FormsModule],
   templateUrl: './navbar.component.html',
-  styleUrl: './navbar.component.css'
+  styleUrls: ['./navbar.component.css']
 })
-export class NavbarComponent {
+export class NavbarComponent implements OnInit {
+  isDarkMode = false;
 
+  ngOnInit() {
+    this.isDarkMode = localStorage.getItem('darkMode') === 'true';
+    this.applyTheme();
+  }
+
+  toggleTheme() {
+    this.isDarkMode = !this.isDarkMode;
+    localStorage.setItem('darkMode', this.isDarkMode.toString());
+    this.applyTheme();
+  }
+
+  private applyTheme() {
+    document.body.classList.toggle('dark-theme', this.isDarkMode);
+  }
 }
