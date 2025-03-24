@@ -15,10 +15,10 @@ services:
     restart: always
 
 
-  RapidQuizerSpring:
+  rapidquizerspring:
     build:
       context: ./RapidQuizerSpring
-    container_name: RapidQuizerSpring
+    container_name: rapidquizerspring
     ports:
       - "8080:8080"
     depends_on:
@@ -34,11 +34,11 @@ services:
   RapidQuizerAngular:
     build:
       context: ./RapidQuizerAngular
-    container_name: RapidQuizerAngular
+    container_name: rapidquizerangular
     ports:
       - "80:80"
     depends_on:
-      - RapidQuizerSpring
+      - rapidquizerspring
     networks:
       - app-network
     restart: always
