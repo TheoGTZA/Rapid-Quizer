@@ -1,40 +1,146 @@
-<div class="container mt-4">
-  <div class="row mb-4">
-    <div class="col-md-4">
-      <select class="form-select" (change)="onCategoryChange($event)">
-        <option [ngValue]="null">Toutes les catégories</option>
-        <option *ngFor="let category of categories" [value]="category.id">
-          {{ category.name }}
-        </option>
-      </select>
-    </div>
-  </div>
+<div class="page-container">
+  <!-- Burger Menu Button -->
+  <button
+    class="sidebar-toggle"
+    [class.button-collapsed]="!isSidebarVisible"
+    (click)="toggleSidebar()"
+  >
+    <i
+      class="fas"
+      [class.fa-bars]="!isSidebarVisible"
+      [class.fa-times]="isSidebarVisible"
+    >
+    </i>
+  </button>
 
-  <!-- Add loading spinner here -->
-  <div *ngIf="loading" class="text-center">
-    <div class="spinner-border text-primary" role="status">
-      <span class="visually-hidden">Loading...</span>
-    </div>
-  </div>
+  <div class="page-container">
+    <div class="sidebar" [class.sidebar-hidden]="!isSidebarVisible">
+      <h3 class="sidebar-title">Catégories</h3>
+      <div class="category-list">
+        <div class="category-item">
+          <a
+            [class.active]="!selectedCategoryId"
+            (click)="onCategoryChange(null)"
+          >
+            Toutes les catégories
+          </a>
+        </div>
 
-  <!-- Wrap existing content with visibility control -->
-  <div class="row" [style.visibility]="loading ? 'hidden' : 'visible'">
-    <div class="col-md-12">
-      <div *ngFor="let question of getFilteredQuestions()" class="card mb-3">
-        <div class="card-body">
-          <h5 class="card-title">
-            <div [innerHTML]="cleanLatex(question.text)" class="math"></div>
-          </h5>
-          <div class="answers-list">
-            <div
-              *ngFor="let answer of question.answers"
-              class="answer-item"
-              [class.correct-answer]="answer.correct"
+        <ng-container *ngFor="let category of categoriesTree">
+          <!-- Parent category -->
+          <div class="category-item">
+            <a
+              [class.active]="selectedCategoryId === category.id"
+              class="category-link"
+              (click)="onCategoryChange(category.id)"
             >
-              <span class="answer-marker">{{
-                answer.correct ? "✓" : "•"
-              }}</span>
-              <div [innerHTML]="cleanLatex(answer.text)" class="math"></div>
+              <span class="category-name">{{ category.name }}</span>
+              <span
+                *ngIf="category.children.length > 0"
+                class="toggle-icon"
+                (click)="toggleCategory(category.id, $event)"
+              >
+                <i
+                  class="fas"
+                  [class.fa-chevron-down]="isCategoryExpanded(category.id)"
+                  [class.fa-chevron-right]="!isCategoryExpanded(category.id)"
+                >
+                </i>
+              </span>
+            </a>
+          </div>
+
+          <!-- Children -->
+          <ng-container
+            *ngIf="
+              category.children.length > 0 && isCategoryExpanded(category.id)
+            "
+          >
+            <ng-container
+              *ngTemplateOutlet="
+                categoryChildren;
+                context: { $implicit: category.children }
+              "
+            >
+            </ng-container>
+          </ng-container>
+        </ng-container>
+
+        <!-- Template for nested categories -->
+        <ng-template #categoryChildren let-children>
+          <ng-container *ngFor="let child of children">
+            <div
+              class="category-item child-category"
+              [style.marginLeft.px]="child.level * 20"
+            >
+              <a
+                [class.active]="selectedCategoryId === child.id"
+                class="category-link"
+                (click)="onCategoryChange(child.id)"
+              >
+                <span class="category-name">{{ child.name }}</span>
+                <span
+                  *ngIf="child.children.length > 0"
+                  class="toggle-icon"
+                  (click)="toggleCategory(child.id, $event)"
+                >
+                  <i
+                    class="fas"
+                    [class.fa-chevron-down]="isCategoryExpanded(child.id)"
+                    [class.fa-chevron-right]="!isCategoryExpanded(child.id)"
+                  >
+                  </i>
+                </span>
+              </a>
+            </div>
+            <ng-container
+              *ngIf="child.children.length > 0 && isCategoryExpanded(child.id)"
+            >
+              <ng-container
+                *ngTemplateOutlet="
+                  categoryChildren;
+                  context: { $implicit: child.children }
+                "
+              >
+              </ng-container>
+            </ng-container>
+          </ng-container>
+        </ng-template>
+      </div>
+    </div>
+
+    <!-- Contenu principal -->
+    <div class="main-content" [class.full-width]="!isSidebarVisible">
+      <!-- Chargement -->
+      <div *ngIf="loading" class="text-center">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+      </div>
+
+      <!-- Liste des questions -->
+      <div class="row" [style.visibility]="loading ? 'hidden' : 'visible'">
+        <div class="col-md-12">
+          <div
+            *ngFor="let question of getFilteredQuestions()"
+            class="card mb-3"
+          >
+            <div class="card-body">
+              <h5 class="card-title">
+                <div [innerHTML]="cleanLatex(question.text)" class="math"></div>
+              </h5>
+              <div class="answers-list">
+                <div
+                  *ngFor="let answer of question.answers"
+                  class="answer-item"
+                  [class.correct-answer]="answer.correct"
+                >
+                  <span class="answer-marker">{{
+                    answer.correct ? "✓" : "•"
+                  }}</span>
+                  <div [innerHTML]="cleanLatex(answer.text)" class="math"></div>
+                </div>
+              </div>
             </div>
           </div>
         </div>

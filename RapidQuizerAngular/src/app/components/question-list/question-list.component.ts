@@ -2,6 +2,7 @@ import { Component, OnInit, AfterViewChecked } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Question } from '../../models/question';
 import { Category } from '../../models/category';
+import { CategoryTree } from '../../models/CategoryTree';
 import { FormsModule } from '@angular/forms';
 import { QuestionService } from '../../services/questionsService';
 
@@ -20,12 +21,16 @@ declare global {
 })
 
 
+
 export class QuestionListComponent implements OnInit, AfterViewChecked {
   private mathRendered = false;
   questions: Question[] = [];
   categories: Category[] = [];
   selectedCategoryId: number | null = null;
   loading = false;
+  categoriesTree: CategoryTree[] = [];
+  expandedCategories: Set<number> = new Set();
+  isSidebarVisible: boolean = true;
 
   constructor(private questionService: QuestionService) {}
 
@@ -38,11 +43,85 @@ export class QuestionListComponent implements OnInit, AfterViewChecked {
     this.questionService.getCategories().subscribe({
       next: (data) => {
         this.categories = data;
+        this.categoriesTree = this.buildCategoryTree(data);
+        console.log('Category Tree:', this.categoriesTree);
       },
       error: (error) => {
         console.error('Erreur lors du chargement des catégories:', error);
       }
     });
+  }
+  
+  buildCategoryTree(categories: Category[]): CategoryTree[] {
+    const categoryMap = new Map<number, CategoryTree>();
+    const roots: CategoryTree[] = [];
+  
+    // First pass: create CategoryTree objects
+    for (const cat of categories) {
+      const node: CategoryTree = {
+        id: cat.id,
+        name: cat.name,
+        parentId: cat.parent?.id || null,
+        children: [],
+        level: 0
+      };
+      categoryMap.set(cat.id, node);
+    }
+  
+    // Second pass: build the tree structure
+    categories.forEach(cat => {
+      const node = categoryMap.get(cat.id);
+      if (!node) return;
+  
+      if (cat.parent) {
+        const parentNode = categoryMap.get(cat.parent.id);
+        if (parentNode) {
+          // Set the level based on parent's level
+          node.level = parentNode.level + 1;
+          // Add to parent's children
+          parentNode.children.push(node);
+        } else {
+          roots.push(node);
+        }
+      } else {
+        // This is a root node
+        node.level = 0;
+        roots.push(node);
+      }
+    });
+  
+    // Sort children arrays by name
+    const sortChildren = (node: CategoryTree) => {
+      node.children.sort((a, b) => a.name.localeCompare(b.name));
+      node.children.forEach(child => sortChildren(child));
+    };
+  
+    // Sort roots and all children
+    roots.sort((a, b) => a.name.localeCompare(b.name));
+    roots.forEach(root => sortChildren(root));
+  
+    // Debug logging
+    console.log('Category Map:', Array.from(categoryMap.entries()));
+    console.log('Roots with nested children:', JSON.stringify(roots, null, 2));
+  
+    return roots;
+  }
+
+  toggleCategory(categoryId: number, event: Event): void {
+    event.stopPropagation(); // Prevent triggering category selection
+    if (this.expandedCategories.has(categoryId)) {
+      this.expandedCategories.delete(categoryId);
+    } else {
+      this.expandedCategories.add(categoryId);
+    }
+  }
+
+  isCategoryExpanded(categoryId: number): boolean {
+    return this.expandedCategories.has(categoryId);
+  }
+
+  toggleSidebar(): void {
+    this.isSidebarVisible = !this.isSidebarVisible;
   }
 
   loadQuestions() {
@@ -58,15 +137,14 @@ export class QuestionListComponent implements OnInit, AfterViewChecked {
     });
   }
 
-  onCategoryChange(event: any) {
-    this.selectedCategoryId = event.target.value ? Number(event.target.value) : null;
+  onCategoryChange(categoryId: number | null): void {
+    this.selectedCategoryId = categoryId;
     this.mathRendered = false;
-    this.loading = true; // Activer l'état de chargement
+    this.loading = true;
   
-    if (this.selectedCategoryId) {
-      this.questionService.getQuestionsByCategory(this.selectedCategoryId).subscribe({
+    if (categoryId) {
+      this.questionService.getQuestionsByCategory(categoryId).subscribe({
         next: (data) => {
-          // Pré-traitement des questions avant affichage
           this.questions = data;
           requestAnimationFrame(() => {
             if (window.MathJax) {
