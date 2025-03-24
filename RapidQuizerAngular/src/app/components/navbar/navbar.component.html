@@ -3,18 +3,18 @@
     <a class="navbar-brand" routerLink="/">
       <i class="fas fa-graduation-cap me-2"></i>RapidQuizer
     </a>
+
     <div class="navbar-nav">
-      <a
-        class="nav-link"
-        routerLink="/"
-        routerLinkActive="active"
-        [routerLinkActiveOptions]="{ exact: true }"
-      >
-        <i class="fas fa-home me-1"></i>Accueil
+      <a class="nav-link" routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+        <i class="fas fa-home me-1"></i> Accueil
       </a>
       <a class="nav-link" routerLink="/questions" routerLinkActive="active">
-        <i class="fas fa-book me-1"></i>Exercices
+        <i class="fas fa-book me-1"></i> Exercices
+      </a>
+      <a class="nav-link" routerLink="/add" routerLinkActive="active">
+        <i class="fa-solid fa-arrow-up-from-bracket"></i> Ajout
       </a>
     </div>
+
   </div>
 </nav>

@@ -1,0 +1,59 @@
+<div class="category-form">
+  <h3>Create New Category</h3>
+  <input
+    type="text"
+    [(ngModel)]="newCategory.name"
+    placeholder="Category name"
+  />
+  <select [(ngModel)]="newCategory.parentId">
+    <option [value]="null">No parent (Root category)</option>
+    @for (category of categories; track category.id) {
+      <option [value]="category.id">{{ category.name }}</option>
+    }
+  </select>
+  <button (click)="createCategory()">Create Category</button>
+</div>
+
+<div class="file-zone">
+  <div class="file-container">
+    @if (!file) {
+      <input type="file" (change)="getFile($event)" class="file" />
+      @if (fileError) {
+        <div class="error-message">{{ fileError }}</div>
+      }
+    } @if (file) {
+    <div>
+      File name: {{ file?.name }}
+      <br />
+      <button (click)="file = undefined">clear file</button>
+    </div>
+  }
+  </div>
+  <select class="choice-category" [(ngModel)]="selectedCategory">
+    @for (category of categories; track category.id) {
+      <option [value]="category.id">{{ category.name }}</option>
+    }
+  </select>
+</div>
+
+<div class="button-upload">
+  <button (click)="uploadFile()">upload file</button>
+</div>
+
+<div class="horizontal-line"></div>
+
+<div class="createDatas">
+  <div class="createQuestion">
+    <div>Question : </div>
+    <input type="text" [(ngModel)]="newData.question" placeholder="Your question here"/>
+  </div>
+  <div class="nbOfAnswers">
+    <div>Number of answers : </div>
+    <input type="number" [(ngModel)]="nbAnswers" (input)="updateNbInputs()" placeholder="4"/>
+  </div>
+  <div class="createAnswers">
+    <div *ngFor="let input of inputs; let i = index">
+      <input type="text" placeholder="Answer {{i + 1}}"/>
+    </div>
+  </div>
+</div>
