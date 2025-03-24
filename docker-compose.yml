@@ -1,0 +1,52 @@
+services:
+
+  quizzerdb:
+    image: mysql:latest
+    container_name: quizzerdb
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456
+      MYSQL_DATABASE: quizzerdb
+    ports:
+      - "3306:3306"
+    networks:
+      - app-network
+    volumes:
+      - mysql_data:/var/lib/mysql
+    restart: always
+
+
+  RapidQuizerSpring:
+    build:
+      context: ./RapidQuizerSpring
+    container_name: RapidQuizerSpring
+    ports:
+      - "8080:8080"
+    depends_on:
+      - quizzerdb
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://quizzerdb:3306/quizzerdb
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: 123456
+    networks:
+      - app-network
+    restart: always
+
+  RapidQuizerAngular:
+    build:
+      context: ./RapidQuizerAngular
+    container_name: RapidQuizerAngular
+    ports:
+      - "80:80"
+    depends_on:
+      - RapidQuizerSpring
+    networks:
+      - app-network
+    restart: always
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  mysql_data:
+    driver: local

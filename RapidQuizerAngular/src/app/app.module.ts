@@ -1,9 +1,9 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { CommonModule } from '@angular/common'; 
+import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
-import { AppRoutingModule } from './app-routing.module'; 
+import { AppRoutingModule } from './app-routing.module';
 
 import { AppComponent } from './app.component';
 import { LatexToJsonComponent } from './components/latex-to-json/latex-to-json.component';
@@ -11,16 +11,17 @@ import { NavbarComponent } from './components/navbar/navbar.component';
 
 @NgModule({
   declarations: [
-    AppComponent,
-    LatexToJsonComponent,
-    NavbarComponent
+
   ],
   imports: [
     BrowserModule,
-    CommonModule, 
-    FormsModule, 
+    CommonModule,
+    FormsModule,
     HttpClientModule,
-    AppRoutingModule
+    AppRoutingModule,
+    AppComponent,
+    LatexToJsonComponent,
+    NavbarComponent
   ],
   providers: [],
   bootstrap: [AppComponent]
