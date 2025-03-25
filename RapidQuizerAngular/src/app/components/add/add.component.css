@@ -59,7 +59,7 @@
   margin-top: 30px;
 }
 
-.file-zone {
+.file-zone, .createQuestion, .nbOfAnswers {
   width: 50%;
   margin: auto;
   position: relative;
@@ -73,3 +73,39 @@
   right: 20px;
 }
 
+.createQuestion input, .nbOfAnswers input {
+  margin-left: 5px;
+}
+
+.nbOfAnswers {
+  margin: 10px auto 10px;
+}
+
+.nbOfAnswers input {
+  width: 40px;
+}
+
+.createAnswers {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  column-gap: 30px;
+  row-gap: 10px;
+  justify-content: center;
+  width: 40%;
+  margin: auto;
+}
+
+.createAnswers textarea, .createQuestion textarea {
+  width: 100%;
+  min-width: 150px;
+  max-width: 350px;
+  padding: 5px;
+  resize: none;
+  overflow: hidden;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+.createAnswers textarea:focus, .createQuestion textarea:focus {
+  outline: none;
+}

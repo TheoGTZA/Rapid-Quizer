@@ -17,7 +17,7 @@ export class AddComponent {
   selectedCategory: number;
   newCategory: { name: string; parentId: number | null } = { name: '', parentId: null };
   fileError: string | null = null;
-  newData : { question: string;}
+  newData : { question: string;} = {question: ''};
   nbAnswers: number = 4;
   inputs: number[] = [];
 
@@ -135,7 +135,13 @@ export class AddComponent {
 
   updateNbInputs() {
     this.inputs = Array(this.nbAnswers).fill(0);
-    console.error("No no ! ", this.nbAnswers, this.inputs.length);
+  }
+
+  onInputChange(event: Event) {
+    const textArea = event.target as HTMLAreaElement;
+
+    textArea.style.height = 'auto';
+    textArea.style.height = `${textArea.scrollHeight}px`;
   }
 
 }

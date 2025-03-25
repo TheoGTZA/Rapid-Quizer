@@ -45,7 +45,7 @@
 <div class="createDatas">
   <div class="createQuestion">
     <div>Question : </div>
-    <input type="text" [(ngModel)]="newData.question" placeholder="Your question here"/>
+    <textarea (input)="onInputChange($event)" [(ngModel)]="newData.question" placeholder="Your question here"></textarea>
   </div>
   <div class="nbOfAnswers">
     <div>Number of answers : </div>
@@ -53,7 +53,7 @@
   </div>
   <div class="createAnswers">
     <div *ngFor="let input of inputs; let i = index">
-      <input type="text" placeholder="Answer {{i + 1}}"/>
+      <textarea (input)="onInputChange($event)" placeholder="Answer {{i + 1}}"></textarea>
     </div>
   </div>
 </div>
