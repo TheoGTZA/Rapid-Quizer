@@ -9,7 +9,7 @@ import {NgForOf} from '@angular/common';
   selector: 'app-add',
   templateUrl: './add.component.html',
   styleUrls: ['./add.component.css'],
-  imports: [FormsModule, HttpClientModule, NgForOf],
+  imports: [FormsModule, HttpClientModule, NgForOf]
 })
 export class AddComponent {
   file: any;
@@ -17,7 +17,7 @@ export class AddComponent {
   selectedCategory: number;
   newCategory: { name: string; parentId: number | null } = { name: '', parentId: null };
   fileError: string | null = null;
-  newData : { question: string;} = {question: ''};
+  newData : { question: string; answers: string[]} = {question: '', answers: []};
   nbAnswers: number = 4;
   inputs: number[] = [];
 
@@ -52,12 +52,12 @@ export class AddComponent {
 
   getFile(event: any) {
     let fileDrop = event.target.files[0];
-    console.log('File selected:', this.file);
 
     const file_ext: string = fileDrop.name.split('.')[fileDrop.name.split('.').length-1];
     if(file_ext == "tex") {
       this.file = fileDrop;
       this.fileError = null;
+      console.log('File selected:', this.file);
     }
     else {
       this.fileError = "Le fichier doit être au format LaTeX (.tex)";
@@ -142,6 +142,51 @@ export class AddComponent {
 
     textArea.style.height = 'auto';
     textArea.style.height = `${textArea.scrollHeight}px`;
+  }
+
+  async uploadQuestionAnswers() {
+
+    if (!this.newData.question) {
+      console.error("Enter a question");
+      return;
+    }
+
+    if (!this.selectedCategory) {
+      console.error('No category selected');
+      return;
+    }
+
+    let formData = new FormData();
+    formData.append('question', this.newData.question);
+    formData.append(`answers`, JSON.stringify(this.newData.answers));
+    formData.append('category', this.selectedCategory.toString());
+
+    console.log('FormData content:', formData.get(`answers`));
+
+    try {
+      const response = await fetch('/api/uploadqa', {
+        method: 'POST',
+        body: formData,
+      });
+
+      const contentType = response.headers.get('Content-Type');
+      let result;
+      if (contentType && contentType.includes('application/json')) {
+        result = await response.json();
+      } else {
+        result = await response.text();
+      }
+      console.log('Response JSON:', result);
+
+      if (response.ok) {
+        this.newData.question = null;
+        this.newData.answers = [];
+        console.log('Question and answers cleared after successful upload');
+      }
+
+    } catch (error) {
+      console.error('Error uploading q/a:', error);
+    }
   }
 
 }

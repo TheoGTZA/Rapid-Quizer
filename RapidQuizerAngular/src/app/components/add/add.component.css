@@ -73,7 +73,7 @@
   right: 20px;
 }
 
-.createQuestion input, .nbOfAnswers input {
+.createQuestion textArea, .nbOfAnswers input {
   margin-left: 5px;
 }
 

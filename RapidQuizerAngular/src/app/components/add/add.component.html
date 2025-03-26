@@ -53,7 +53,11 @@
   </div>
   <div class="createAnswers">
     <div *ngFor="let input of inputs; let i = index">
-      <textarea (input)="onInputChange($event)" placeholder="Answer {{i + 1}}"></textarea>
+      <textarea (input)="onInputChange($event)" [(ngModel)]="newData.answers[i]" placeholder="Answer {{i + 1}}"></textarea>
     </div>
   </div>
+</div>
+
+<div class="button-upload">
+  <button (click)="uploadQuestionAnswers()">upload q/a</button>
 </div>

@@ -1,5 +1,7 @@
 package com.tgza.rapidquizerspring.controllers;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.tgza.rapidquizerspring.entities.Answer;
 import com.tgza.rapidquizerspring.entities.Category;
 import com.tgza.rapidquizerspring.entities.Question;
@@ -105,5 +107,44 @@ public class FileUploadController {
                     .trim();
         }
         return "";
+    }
+
+    @PostMapping("/uploadqa")
+    public String handleQAUpload(@RequestParam("question") String q, @RequestParam("answers") String answersJSON, @RequestParam("category") Long categoryId) {
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            List<String> a = mapper.readValue(answersJSON, new TypeReference<List<String>>() {});
+
+            System.out.println("Question: " + q);
+            System.out.println("Answers: " + a);
+
+            Question question = new Question();
+            question.setText(q);
+
+            List<Answer> answers = new ArrayList<>();
+
+            for (int i = 0; i < a.size(); i++) {
+                System.out.println(i + " : " + a.get(i));
+                boolean isCorrect = a.get(i).startsWith("\\bonne") || a.get(i).startsWith("\\correctchoice");
+
+                Answer answer = new Answer();
+                answer.setText(a.get(i));
+                answer.setCorrect(isCorrect);
+                answer.setQuestion(question);
+                answers.add(answer);
+            }
+
+            Category category = categoryRepository.findById(categoryId)
+                    .orElseThrow(() -> new RuntimeException("Category not found"));
+
+            question.setAnswers(answers);
+            question.setCategory(category);
+            questionRepository.save(question);
+
+            return "q/a uploaded and data saved successfully";
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "Error processing file: " + e.getMessage();
+        }
     }
 }
