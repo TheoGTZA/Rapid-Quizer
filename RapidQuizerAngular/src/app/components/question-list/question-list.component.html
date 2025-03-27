@@ -145,6 +145,45 @@
           </div>
         </div>
       </div>
+
+      <!-- Pagination -->
+      <div class="pagination-container" *ngIf="questions.length > itemsPerPage">
+        <nav aria-label="Questions pagination">
+          <ul class="pagination">
+            <!-- Previous button -->
+            <li class="page-item" [class.disabled]="currentPage === 1">
+              <a
+                class="page-link"
+                (click)="changePage(currentPage - 1)"
+                aria-label="Previous"
+              >
+                <span aria-hidden="true">&laquo;</span>
+              </a>
+            </li>
+
+            <!-- Page numbers -->
+            <li
+              class="page-item"
+              *ngFor="let page of getPaginationArray()"
+              [class.active]="page === currentPage"
+            >
+              <a class="page-link" (click)="changePage(page)">{{ page }}</a>
+            </li>
+
+            <!-- Next button -->
+            <li class="page-item" [class.disabled]="currentPage === totalPages">
+              <a
+                class="page-link"
+                (click)="changePage(currentPage + 1)"
+                aria-label="Next"
+              >
+                <!-- &raquo == »-->
+                <span aria-hidden="true">&raquo;</span>
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </div>
     </div>
   </div>
 </div>

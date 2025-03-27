@@ -31,6 +31,8 @@ export class QuestionListComponent implements OnInit, AfterViewChecked {
   categoriesTree: CategoryTree[] = [];
   expandedCategories: Set<number> = new Set();
   isSidebarVisible: boolean = true;
+  itemsPerPage: number = 8;
+  currentPage: number = 1;
 
   constructor(private questionService: QuestionService) {}
 
@@ -139,6 +141,7 @@ export class QuestionListComponent implements OnInit, AfterViewChecked {
 
   onCategoryChange(categoryId: number | null): void {
     this.selectedCategoryId = categoryId;
+    this.currentPage = 1; // Remettre à la première page lors du changement de catégorie
     this.mathRendered = false;
     this.loading = true;
   
@@ -166,7 +169,25 @@ export class QuestionListComponent implements OnInit, AfterViewChecked {
 
 
   getFilteredQuestions(): Question[] {
-    return this.questions;
+    const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+    const endIndex = startIndex + this.itemsPerPage;
+    return this.questions.slice(startIndex, endIndex);
+  }
+
+  get totalPages(): number {
+    return Math.ceil(this.questions.length / this.itemsPerPage);
+  }
+
+  changePage(page: number): void {
+    if (page >= 1 && page <= this.totalPages) {
+      this.currentPage = page;
+      this.mathRendered = false;
+      setTimeout(() => this.renderMath(), 100);
+    }
+  }
+
+  getPaginationArray(): number[] {
+    return Array.from({length: this.totalPages}, (_, i) => i + 1);
   }
 
   cleanLatex(text: string): string {
