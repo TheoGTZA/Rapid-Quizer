@@ -17,7 +17,7 @@ export class AddComponent {
   selectedCategory: number;
   newCategory: { name: string; parentId: number | null } = { name: '', parentId: null };
   fileError: string | null = null;
-  newData : { question: string; answers: string[]} = {question: '', answers: []};
+  newData : { question: string; answers: string[]; correct: boolean[]} = {question: '', answers: [], correct: []};
   nbAnswers: number = 4;
   inputs: number[] = [];
 
@@ -135,6 +135,7 @@ export class AddComponent {
 
   updateNbInputs() {
     this.inputs = Array(this.nbAnswers).fill(0);
+    this.newData.correct = Array(this.nbAnswers).fill(false);
   }
 
   onInputChange(event: Event) {
@@ -160,6 +161,7 @@ export class AddComponent {
     formData.append('question', this.newData.question);
     formData.append(`answers`, JSON.stringify(this.newData.answers));
     formData.append('category', this.selectedCategory.toString());
+    formData.append('correct', JSON.stringify(this.newData.correct));
 
     console.log('FormData content:', formData.get(`answers`));
 

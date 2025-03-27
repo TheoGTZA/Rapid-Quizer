@@ -52,8 +52,9 @@
     <input type="number" [(ngModel)]="nbAnswers" (input)="updateNbInputs()" placeholder="4"/>
   </div>
   <div class="createAnswers">
-    <div *ngFor="let input of inputs; let i = index">
+    <div class="Answer" *ngFor="let input of inputs; let i = index">
       <textarea (input)="onInputChange($event)" [(ngModel)]="newData.answers[i]" placeholder="Answer {{i + 1}}"></textarea>
+      <input type="checkbox" [(ngModel)]="newData.correct[i]"/>
     </div>
   </div>
 </div>

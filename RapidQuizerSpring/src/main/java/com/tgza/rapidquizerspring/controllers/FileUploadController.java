@@ -110,13 +110,15 @@ public class FileUploadController {
     }
 
     @PostMapping("/uploadqa")
-    public String handleQAUpload(@RequestParam("question") String q, @RequestParam("answers") String answersJSON, @RequestParam("category") Long categoryId) {
+    public String handleQAUpload(@RequestParam("question") String q, @RequestParam("answers") String answersJSON, @RequestParam("category") Long categoryId, @RequestParam("correct") String correctJSON) {
         try {
             ObjectMapper mapper = new ObjectMapper();
             List<String> a = mapper.readValue(answersJSON, new TypeReference<List<String>>() {});
+            List<String> c = mapper.readValue(correctJSON, new TypeReference<List<String>>() {});
 
             System.out.println("Question: " + q);
             System.out.println("Answers: " + a);
+            System.out.println("Correct: " + c);
 
             Question question = new Question();
             question.setText(q);
@@ -125,7 +127,7 @@ public class FileUploadController {
 
             for (int i = 0; i < a.size(); i++) {
                 System.out.println(i + " : " + a.get(i));
-                boolean isCorrect = a.get(i).startsWith("\\bonne") || a.get(i).startsWith("\\correctchoice");
+                boolean isCorrect = c.get(i).equals("true");
 
                 Answer answer = new Answer();
                 answer.setText(a.get(i));

@@ -59,7 +59,7 @@
   margin-top: 30px;
 }
 
-.file-zone, .createQuestion, .nbOfAnswers {
+.file-zone, .createQuestion, .nbOfAnswers, .Answer {
   width: 50%;
   margin: auto;
   position: relative;
@@ -97,7 +97,7 @@
 
 .createAnswers textarea, .createQuestion textarea {
   width: 100%;
-  min-width: 150px;
+  min-width: 300px;
   max-width: 350px;
   padding: 5px;
   resize: none;
