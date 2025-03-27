@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import {PanierService} from '../../services/panier.service';
 
 @Component({
   selector: 'app-navbar',
@@ -12,6 +13,9 @@ import { FormsModule } from '@angular/forms';
 })
 export class NavbarComponent implements OnInit {
   isDarkMode = false;
+
+  constructor(public panierService: PanierService) {}
+
 
   ngOnInit() {
     this.isDarkMode = localStorage.getItem('darkMode') === 'true';

@@ -8,6 +8,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { LatexToJsonComponent } from './components/latex-to-json/latex-to-json.component';
 import { NavbarComponent } from './components/navbar/navbar.component';
+import {PanierComponent} from './components/panier/panier.component';
 
 @NgModule({
   declarations: [
@@ -21,7 +22,8 @@ import { NavbarComponent } from './components/navbar/navbar.component';
     AppRoutingModule,
     AppComponent,
     LatexToJsonComponent,
-    NavbarComponent
+    NavbarComponent,
+    PanierComponent
   ],
   providers: [],
   bootstrap: [AppComponent]

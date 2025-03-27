@@ -1,0 +1,15 @@
+<div class="cart-container">
+  <h2>Selected Questions</h2>
+  <div *ngIf="cartQuestions.length === 0">
+    <p>No questions selected.</p>
+  </div>
+  <div *ngIf="cartQuestions.length > 0">
+    <ul>
+      <li *ngFor="let question of cartQuestions">
+        <div [innerHTML]="question.text"></div>
+        <button (click)="removeQuestion(question.id)">Remove</button>
+      </li>
+    </ul>
+    <button (click)="clearCart()">Clear Cart</button>
+  </div>
+</div>

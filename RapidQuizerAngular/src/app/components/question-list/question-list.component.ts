@@ -5,6 +5,7 @@ import { Category } from '../../models/category';
 import { CategoryTree } from '../../models/CategoryTree';
 import { FormsModule } from '@angular/forms';
 import { QuestionService } from '../../services/questionsService';
+import {PanierService} from '../../services/panier.service';
 
 declare global {
   interface Window {
@@ -34,7 +35,8 @@ export class QuestionListComponent implements OnInit, AfterViewChecked {
   itemsPerPage: number = 8;
   currentPage: number = 1;
 
-  constructor(private questionService: QuestionService) {}
+  constructor(private questionService: QuestionService,
+              private panierService: PanierService) {}
 
   ngOnInit() {
     this.loadCategories();
@@ -53,11 +55,11 @@ export class QuestionListComponent implements OnInit, AfterViewChecked {
       }
     });
   }
-  
+
   buildCategoryTree(categories: Category[]): CategoryTree[] {
     const categoryMap = new Map<number, CategoryTree>();
     const roots: CategoryTree[] = [];
-  
+
     // First pass: create CategoryTree objects
     for (const cat of categories) {
       const node: CategoryTree = {
@@ -69,12 +71,12 @@ export class QuestionListComponent implements OnInit, AfterViewChecked {
       };
       categoryMap.set(cat.id, node);
     }
-  
+
     // Second pass: build the tree structure
     categories.forEach(cat => {
       const node = categoryMap.get(cat.id);
       if (!node) return;
-  
+
       if (cat.parent) {
         const parentNode = categoryMap.get(cat.parent.id);
         if (parentNode) {
@@ -91,21 +93,21 @@ export class QuestionListComponent implements OnInit, AfterViewChecked {
         roots.push(node);
       }
     });
-  
+
     // Sort children arrays by name
     const sortChildren = (node: CategoryTree) => {
       node.children.sort((a, b) => a.name.localeCompare(b.name));
       node.children.forEach(child => sortChildren(child));
     };
-  
+
     // Sort roots and all children
     roots.sort((a, b) => a.name.localeCompare(b.name));
     roots.forEach(root => sortChildren(root));
-  
+
     // Debug logging
     console.log('Category Map:', Array.from(categoryMap.entries()));
     console.log('Roots with nested children:', JSON.stringify(roots, null, 2));
-  
+
     return roots;
   }
 
@@ -144,7 +146,7 @@ export class QuestionListComponent implements OnInit, AfterViewChecked {
     this.currentPage = 1; // Remettre à la première page lors du changement de catégorie
     this.mathRendered = false;
     this.loading = true;
-  
+
     if (categoryId) {
       this.questionService.getQuestionsByCategory(categoryId).subscribe({
         next: (data) => {
@@ -246,5 +248,9 @@ export class QuestionListComponent implements OnInit, AfterViewChecked {
 
   ngAfterViewChecked() {
     // Ne rien faire ici car nous gérons maintenant le rendu avec setTimeout
+  }
+
+  selectQuestion(question: Question): void {
+    this.panierService.addQuestionsToCart(question);
   }
 }
