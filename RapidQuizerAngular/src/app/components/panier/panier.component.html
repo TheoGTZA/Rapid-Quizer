@@ -6,7 +6,11 @@
   <div *ngIf="cartQuestions.length > 0">
     <ul>
       <li *ngFor="let question of cartQuestions">
-        <div [innerHTML]="question.text"></div>
+        <div
+          class="question-text"
+          [innerHTML]="renderLatex(question.text)"
+          class="math"
+        ></div>
         <button (click)="removeQuestion(question.id)">Remove</button>
       </li>
     </ul>

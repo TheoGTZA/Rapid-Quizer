@@ -1,4 +1,5 @@
-import { Component, OnInit, AfterViewChecked } from '@angular/core';
+import { Component, OnInit, AfterViewChecked, AfterViewInit } from '@angular/core';
+import { SafeHtml } from '@angular/platform-browser';
 import { CommonModule } from '@angular/common';
 import { Question } from '../../models/question';
 import { Category } from '../../models/category';
@@ -6,6 +7,7 @@ import { CategoryTree } from '../../models/CategoryTree';
 import { FormsModule } from '@angular/forms';
 import { QuestionService } from '../../services/questionsService';
 import {PanierService} from '../../services/panier.service';
+import { LatexRenderService } from '../../services/latex-render.service';
 
 declare global {
   interface Window {
@@ -23,8 +25,7 @@ declare global {
 
 
 
-export class QuestionListComponent implements OnInit, AfterViewChecked {
-  private mathRendered = false;
+export class QuestionListComponent implements OnInit, AfterViewInit {
   questions: Question[] = [];
   categories: Category[] = [];
   selectedCategoryId: number | null = null;
@@ -36,12 +37,26 @@ export class QuestionListComponent implements OnInit, AfterViewChecked {
   currentPage: number = 1;
 
   constructor(private questionService: QuestionService,
-              private panierService: PanierService) {}
+              private panierService: PanierService,
+              private latexService: LatexRenderService) {}
 
   ngOnInit() {
     this.loadCategories();
     this.loadQuestions();
   }
+            
+  ngAfterViewInit() {
+    setTimeout(() => this.renderMath(), 0);
+  }
+            
+  renderLatex(text: string): string {
+  return this.latexService.cleanLatex(text);
+  }
+            
+  renderMath() {
+  this.latexService.renderMath();
+  }
+
 
   loadCategories() {
     this.questionService.getCategories().subscribe({
@@ -60,7 +75,7 @@ export class QuestionListComponent implements OnInit, AfterViewChecked {
     const categoryMap = new Map<number, CategoryTree>();
     const roots: CategoryTree[] = [];
 
-    // First pass: create CategoryTree objects
+
     for (const cat of categories) {
       const node: CategoryTree = {
         id: cat.id,
@@ -72,7 +87,7 @@ export class QuestionListComponent implements OnInit, AfterViewChecked {
       categoryMap.set(cat.id, node);
     }
 
-    // Second pass: build the tree structure
+
     categories.forEach(cat => {
       const node = categoryMap.get(cat.id);
       if (!node) return;
@@ -80,39 +95,30 @@ export class QuestionListComponent implements OnInit, AfterViewChecked {
       if (cat.parent) {
         const parentNode = categoryMap.get(cat.parent.id);
         if (parentNode) {
-          // Set the level based on parent's level
           node.level = parentNode.level + 1;
-          // Add to parent's children
           parentNode.children.push(node);
         } else {
           roots.push(node);
         }
       } else {
-        // This is a root node
         node.level = 0;
         roots.push(node);
       }
     });
 
-    // Sort children arrays by name
     const sortChildren = (node: CategoryTree) => {
       node.children.sort((a, b) => a.name.localeCompare(b.name));
       node.children.forEach(child => sortChildren(child));
     };
 
-    // Sort roots and all children
     roots.sort((a, b) => a.name.localeCompare(b.name));
     roots.forEach(root => sortChildren(root));
-
-    // Debug logging
-    console.log('Category Map:', Array.from(categoryMap.entries()));
-    console.log('Roots with nested children:', JSON.stringify(roots, null, 2));
 
     return roots;
   }
 
   toggleCategory(categoryId: number, event: Event): void {
-    event.stopPropagation(); // Prevent triggering category selection
+    event.stopPropagation(); // Empêche le déclenchement de la sélection de la catégorie
     if (this.expandedCategories.has(categoryId)) {
       this.expandedCategories.delete(categoryId);
     } else {
@@ -132,8 +138,8 @@ export class QuestionListComponent implements OnInit, AfterViewChecked {
     this.questionService.getQuestions().subscribe({
       next: (data) => {
         this.questions = data;
-        this.mathRendered = false;
-        setTimeout(() => this.renderMath(), 100); // Délai plus long pour assurer la mise à jour du DOM
+        this.latexService.resetMathRendered();
+        setTimeout(() => this.renderMath(), 100);
       },
       error: (error) => {
         console.error('Error loading questions:', error);
@@ -143,20 +149,17 @@ export class QuestionListComponent implements OnInit, AfterViewChecked {
 
   onCategoryChange(categoryId: number | null): void {
     this.selectedCategoryId = categoryId;
-    this.currentPage = 1; // Remettre à la première page lors du changement de catégorie
-    this.mathRendered = false;
+    this.currentPage = 1;
     this.loading = true;
 
     if (categoryId) {
       this.questionService.getQuestionsByCategory(categoryId).subscribe({
         next: (data) => {
           this.questions = data;
+          this.latexService.resetMathRendered();
           requestAnimationFrame(() => {
-            if (window.MathJax) {
-              window.MathJax.typesetClear();
-              this.renderMath();
-              this.loading = false;
-            }
+            this.renderMath();
+            this.loading = false;
           });
         },
         error: (error) => {
@@ -183,7 +186,7 @@ export class QuestionListComponent implements OnInit, AfterViewChecked {
   changePage(page: number): void {
     if (page >= 1 && page <= this.totalPages) {
       this.currentPage = page;
-      this.mathRendered = false;
+      this.latexService.resetMathRendered();
       setTimeout(() => this.renderMath(), 100);
     }
   }
@@ -192,65 +195,30 @@ export class QuestionListComponent implements OnInit, AfterViewChecked {
     return Array.from({length: this.totalPages}, (_, i) => i + 1);
   }
 
-  cleanLatex(text: string): string {
-    if (!text) return '';
 
-    return text
-      // Nettoyer les environnements LaTeX
-      .replace(/\\begin\{multicols\}\{\d+\}/g, '')
-      .replace(/\\end\{multicols\}/g, '')
-      .replace(/\\begin\{center\}/g, '')
-      .replace(/\\end\{center\}/g, '')
-      .replace(/\\begin\{(reponses|choices)\}/g, '')
-      .replace(/\\end\{(reponses|choices)\}/g, '')
-      // Gestion des images et paragraphes
-      //A revoir ca
-      .replace(/\\includegraphics\{([^}]+)\}/g, '<img src="assets/images/$1.png" alt="$1" class="latex-image">')
-      .replace(/\\par/g, '<br>')
-      // Nettoyer les commandes de réponse
-      .replace(/\\(bonne|mauvaise|correctchoice|wrongchoice)\{([^}]+)\}/g, '$2')
-      // Nettoyer les autres éléments LaTeX
-      .replace(/^"|"$/g, '')
-      .replace(/\n/g, ' ')
-      .replace(/\\lbrace/g, '\\{')
-      .replace(/\\rbrace/g, '\\}')
-      .replace(/\\mathbb\{([^}]+)\}/g, '\\mathbb{$1}')
-      .replace(/\s+/g, ' ')
-      .trim();
+
+  selectQuestion(question: Question): void {
+    this.panierService.addQuestionsToCart(question);
   }
 
-  renderMath() {
-    if (!this.mathRendered && window.MathJax && window.MathJax.typesetPromise) {
+  renderMathContent() {
+    if (window.MathJax) {
       try {
-        this.mathRendered = true;
-        window.MathJax.typesetPromise()
+        window.MathJax.typesetClear?.();
+        window.MathJax.typesetPromise?.()
           .then(() => {
-            requestAnimationFrame(() => {
-              this.loading = false;
-            });
+            console.log('MathJax rendering successful');
+            this.loading = false;
           })
-          .catch((err: any) => {
+          .catch(err => {
             console.error('MathJax error:', err);
-            this.mathRendered = false;
             this.loading = false;
           });
       } catch (e) {
-        console.error('Error during MathJax rendering:', e);
-        this.mathRendered = false;
+        console.error('Error during MathJax processing:', e);
         this.loading = false;
       }
     }
   }
 
-  ngOnChanges() {
-    this.mathRendered = false;
-  }
-
-  ngAfterViewChecked() {
-    // Ne rien faire ici car nous gérons maintenant le rendu avec setTimeout
-  }
-
-  selectQuestion(question: Question): void {
-    this.panierService.addQuestionsToCart(question);
-  }
 }

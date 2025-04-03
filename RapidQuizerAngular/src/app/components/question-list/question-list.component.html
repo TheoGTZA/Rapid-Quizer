@@ -127,7 +127,10 @@
           >
             <div class="card-body">
               <h5 class="card-title">
-                <div [innerHTML]="cleanLatex(question.text)" class="math"></div>
+                <div
+                  [innerHTML]="renderLatex(question.text)"
+                  class="math"
+                ></div>
               </h5>
               <div class="answers-list">
                 <div
@@ -138,7 +141,10 @@
                   <span class="answer-marker">{{
                     answer.correct ? "✓" : "•"
                   }}</span>
-                  <div [innerHTML]="cleanLatex(answer.text)" class="math"></div>
+                  <div
+                    [innerHTML]="renderLatex(answer.text)"
+                    class="math"
+                  ></div>
                 </div>
                 <button (click)="selectQuestion(question)">Add to Cart</button>
               </div>

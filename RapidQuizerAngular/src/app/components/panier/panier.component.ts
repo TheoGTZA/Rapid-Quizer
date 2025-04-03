@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { PanierService } from '../../services/panier.service';
+import { LatexRenderService } from '../../services/latex-render.service';
 import { Question } from '../../models/question';
 import {CommonModule} from '@angular/common';
 import {FormsModule} from '@angular/forms';
@@ -13,18 +14,41 @@ import {saveAs} from 'file-saver';
   templateUrl: './panier.component.html',
   styleUrls: ['./panier.component.css']
 })
-export class PanierComponent implements OnInit {
+export class PanierComponent implements OnInit, AfterViewInit {
   cartQuestions: Question[] = [];
 
-  constructor(private panierService: PanierService) {}
+  constructor(private panierService: PanierService,
+              private latexService: LatexRenderService
+  ) {}
 
   ngOnInit(): void {
     this.loadCartQuestions();
   }
 
+  ngAfterViewInit() {
+    setTimeout(() => this.renderMath(), 0);
+  }
+
+  // Utiliser directement cleanLatex du service
+  renderLatex(text: string): string {
+    return this.latexService.cleanLatex(text);
+  }
+
+  // Utiliser le service pour le rendu MathJax
+  renderMath() {
+    this.latexService.resetMathRendered();
+    this.latexService.renderMath();
+  }
+
   loadCartQuestions(): void {
     this.cartQuestions = this.panierService.getCartQuestions();
+    // Rafraîchir le rendu LaTeX après le chargement des questions
+    // Utiliser setTimeout pour s'assurer que le DOM est mis à jour
+    setTimeout(() => {
+      this.renderMath();
+    }, 0);
   }
+
 
   removeQuestion(questionId: number): void {
     this.panierService.removeQuestionFromCart(questionId);
