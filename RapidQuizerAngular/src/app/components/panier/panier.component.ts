@@ -16,6 +16,8 @@ import {saveAs} from 'file-saver';
 })
 export class PanierComponent implements OnInit, AfterViewInit {
   cartQuestions: Question[] = [];
+  showAnswers: boolean = false;
+  showAnswersMap: Map<number, boolean> = new Map();// Map pour stocker la visibilité des réponses
 
   constructor(private panierService: PanierService,
               private latexService: LatexRenderService
@@ -49,6 +51,24 @@ export class PanierComponent implements OnInit, AfterViewInit {
     }, 0);
   }
 
+  toggleAnswers(): void {
+    this.showAnswers = !this.showAnswers;
+    setTimeout(() => {
+      this.renderMath();
+    }, 100);
+  }
+
+  toggleAnswerForQuestion(questionId: number): void {
+    const currentState = this.showAnswersMap.get(questionId) || false;
+    this.showAnswersMap.set(questionId, !currentState);
+    setTimeout(() => {
+      this.renderMath();
+    }, 100);
+  }
+
+  isAnswerVisible(questionId: number): boolean {
+    return this.showAnswersMap.get(questionId) || false;
+  }
 
   removeQuestion(questionId: number): void {
     this.panierService.removeQuestionFromCart(questionId);
