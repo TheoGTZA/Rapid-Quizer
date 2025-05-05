@@ -21,23 +21,21 @@ export class LoginComponent {
 
   login() {
     this.errorMessage = '';
-
+  
     if (!this.email || !this.password) {
       this.errorMessage = 'Veuillez remplir tous les champs';
       return;
     }
-
+  
     this.authService.login(this.email, this.password).subscribe({
-      next: (token) => {
-        localStorage.setItem('token', token);
-        this.router.navigate(['/']);
+      next: () => {
+        // Le token est déjà stocké dans le localStorage par le service
+        window.location.href = '/'; // Utiliser window.location au lieu de router
       },
       error: (err) => {
         console.error('Login error:', err);
         if (err.status === 401) {
           this.errorMessage = 'Email ou mot de passe incorrect';
-        } else if (err.status === 400) {
-          this.errorMessage = 'Format d\'email invalide';
         } else {
           this.errorMessage = 'Une erreur est survenue lors de la connexion';
         }

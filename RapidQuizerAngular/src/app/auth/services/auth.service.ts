@@ -1,6 +1,6 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, tap } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -21,7 +21,12 @@ export class AuthService {
       `${this.apiUrl}/login`, 
       { email, password },
       this.httpOptions
-    );
+    ).pipe(
+      tap((response: string) => {
+        // Store the token in local storage
+        localStorage.setItem('token', response);
+      }
+    ));
   }
 
   register(email: string, password: string): Observable<any> {
