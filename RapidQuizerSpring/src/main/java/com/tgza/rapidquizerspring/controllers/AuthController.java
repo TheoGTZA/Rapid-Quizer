@@ -3,6 +3,7 @@ package com.tgza.rapidquizerspring.controllers;
 import com.tgza.rapidquizerspring.Services.UserService;
 import com.tgza.rapidquizerspring.entities.User;
 import com.tgza.rapidquizerspring.enums.Role;
+import com.tgza.rapidquizerspring.utils.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -23,6 +24,9 @@ public class AuthController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private JwtUtil jwtUtil;
+
     // Endpoint pour la connexion
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest) {
@@ -30,7 +34,9 @@ public class AuthController {
                 new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword())
         );
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        return ResponseEntity.ok("Connexion réussie !");
+
+        String token = jwtUtil.generateToken(loginRequest.getEmail());
+        return ResponseEntity.ok(token);
     }
 
     // Endpoint pour la création de compte
@@ -50,4 +56,5 @@ public class AuthController {
         User user = userService.assignRole(roleRequest.getEmail(), roleRequest.getRole());
         return ResponseEntity.ok("Rôle attribué avec succès à " + user.getEmail());
     }
+
 }
