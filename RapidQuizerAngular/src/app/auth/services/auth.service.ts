@@ -44,4 +44,34 @@ export class AuthService {
   logout(): void {
     localStorage.removeItem('token');
   }
+
+  getUserRole(): string | null {
+    const token = this.getToken();
+    if (!token) return null;
+
+    try {
+      const payload = token.split('.')[1];
+      const decodedPayload = JSON.parse(atob(payload));
+      console.log('Decoded token:', decodedPayload);
+      return decodedPayload.role || null;
+    } catch (error) {
+      console.error('Error decoding token:', error);
+      return null;
+    }
+  }
+
+
+  isAdmin(): boolean {
+    return this.getUserRole() === 'ADMIN';
+  }
+
+  isContributor(): boolean {
+    return this.getUserRole() === 'CONTRIBUTOR';
+  }
+
+  hasAnyRole(roles: string[]): boolean {
+    const userRole = this.getUserRole();
+    return userRole ? roles.includes(userRole) : false;
+  }
+  
 }

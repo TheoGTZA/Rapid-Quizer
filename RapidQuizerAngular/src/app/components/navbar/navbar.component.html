@@ -16,7 +16,12 @@
       <a class="nav-link" routerLink="/questions" routerLinkActive="active">
         <i class="fas fa-book me-1"></i> Exercices
       </a>
-      <a class="nav-link" routerLink="/add" routerLinkActive="active">
+      <a
+        *ngIf="canAddExercises()"
+        class="nav-link"
+        routerLink="/add"
+        routerLinkActive="active"
+      >
         <i class="fa-solid fa-arrow-up-from-bracket"></i> Ajout
       </a>
       <a class="nav-link" [routerLink]="['/panier']">

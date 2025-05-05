@@ -10,6 +10,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 
+import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -43,4 +44,9 @@ public class UserService {
         user.setRole(role);
         return userRepository.save(user);
     }
+
+    public Optional<User> findByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
+
 }

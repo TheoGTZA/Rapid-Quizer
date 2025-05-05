@@ -4,22 +4,15 @@ import { LatexToJsonComponent } from './components/latex-to-json/latex-to-json.c
 import {PanierComponent} from './components/panier/panier.component';
 import { LoginComponent } from './auth/components/login-component/login.component';
 import { RegisterComponent } from './auth/components/register/register.component';
+import { AuthGuard } from './auth/guards/auth/auth-guard.guard';
 
 const routes: Routes = [
-  { 
-    path: '', 
-    component: LatexToJsonComponent 
-  },
+  { path: '', component: LatexToJsonComponent },
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
-  { 
-    path: 'panier', 
-    component: PanierComponent 
-  },
-  { 
-    path: '**', 
-    redirectTo: '' 
-  }
+  { path: 'panier', component: PanierComponent },
+  { path: '**', redirectTo: '' },
+  {path: 'add', component: LatexToJsonComponent, canActivate: [AuthGuard]}, 
 ];
 
 @NgModule({

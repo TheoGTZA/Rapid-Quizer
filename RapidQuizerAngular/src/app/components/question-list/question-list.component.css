@@ -70,7 +70,11 @@
   .spinner-border { 
     width: 3rem;
     height: 3rem;
-    margin: 2rem auto;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1000;
   }
   
   /*Cache le contenu le temps que MathJax render les expressions mathématiques*/
