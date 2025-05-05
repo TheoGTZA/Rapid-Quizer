@@ -3,13 +3,17 @@ package com.tgza.rapidquizerspring.controllers;
 import com.tgza.rapidquizerspring.Services.UserService;
 import com.tgza.rapidquizerspring.entities.User;
 import com.tgza.rapidquizerspring.enums.Role;
+import com.tgza.rapidquizerspring.exceptions.EmailAlreadyUsedException;
+import com.tgza.rapidquizerspring.exceptions.InvalidEmailFormatException;
 import com.tgza.rapidquizerspring.utils.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Set;
@@ -42,12 +46,19 @@ public class AuthController {
     // Endpoint pour la création de compte
     @PostMapping("/register")
     public ResponseEntity<User> register(@RequestBody RegisterRequest registerRequest) {
-        User user = userService.registerUser(
-                registerRequest.getEmail(),
-                registerRequest.getPassword(),
-                Role.USER
-        );
-        return ResponseEntity.ok(user);
+        try {
+            User user = userService.registerUser(
+                    registerRequest.getEmail(),
+                    registerRequest.getPassword(),
+                    Role.USER
+            );
+            return ResponseEntity.ok(user);
+        } catch (EmailAlreadyUsedException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(null);
+        } catch (InvalidEmailFormatException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
+
     }
 
     // Endpoint pour définir un rôle

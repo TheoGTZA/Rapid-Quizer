@@ -2,6 +2,8 @@ package com.tgza.rapidquizerspring.Services;
 
 import com.tgza.rapidquizerspring.entities.User;
 import com.tgza.rapidquizerspring.enums.Role;
+import com.tgza.rapidquizerspring.exceptions.EmailAlreadyUsedException;
+import com.tgza.rapidquizerspring.exceptions.InvalidEmailFormatException;
 import com.tgza.rapidquizerspring.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -19,6 +21,15 @@ public class UserService {
     private PasswordEncoder passwordEncoder;
 
     public User registerUser(String email, String password, Role role) {
+        if (userRepository.findByEmail(email).isPresent()) {
+            throw new EmailAlreadyUsedException("Cet email est déjà utilisé.");
+        }
+
+        // Vérification de l'email
+        if (!email.matches("^[\\w.%+-]+@[\\w.-]+\\.[a-zA-Z]{2,6}$")) {
+            throw new InvalidEmailFormatException("L'email fourni n'est pas valide : " + email);
+        }
+
         User user = new User();
         user.setEmail(email);
         user.setPassword(passwordEncoder.encode(password));

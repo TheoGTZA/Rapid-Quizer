@@ -9,11 +9,12 @@
   
   .login-box {
     background: white;
-    padding: 2rem;
+    padding: 2rem 3rem;
     border-radius: 10px;
     box-shadow: 0 8px 16px rgba(0,0,0,0.1);
     width: 100%;
     max-width: 400px;
+    margin : 0 auto;
   }
   
   h1 {
@@ -79,4 +80,15 @@
   
   .register-link a:hover {
     text-decoration: underline;
+  }
+
+  .error-message {
+    background-color: #fee2e2;
+    border: 1px solid #ef4444;
+    color: #dc2626;
+    padding: 0.75rem;
+    border-radius: 6px;
+    margin-bottom: 1.5rem;
+    text-align: center;
+    font-size: 0.875rem;
   }

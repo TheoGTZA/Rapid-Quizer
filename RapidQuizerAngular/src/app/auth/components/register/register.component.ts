@@ -14,6 +14,8 @@ import { Router } from '@angular/router';
 export class RegisterComponent {
   email: string = '';
   password: string = '';
+  confirmPassword: string = '';
+  errorMessage: string = '';
 
   constructor(
     private authService: AuthService,
@@ -21,15 +23,31 @@ export class RegisterComponent {
   ) {}
 
   register() {
+    this.errorMessage = ''; 
+
     if (!this.email || !this.password) {
+      this.errorMessage = 'Veuillez remplir tous les champs.';
       return;
     }
+
+    if (this.password !== this.confirmPassword) {
+      this.errorMessage = 'Les mots de passe ne correspondent pas.';
+      return;
+    }
+
     this.authService.register(this.email, this.password).subscribe({
       next: () => {
         this.router.navigate(['/login']);
       },
       error: (err) => {
         console.error('Registration error:', err);
+        if (err.status === 409) {
+          this.errorMessage = 'Adresse e-mail déjà utilisée.';
+        } else if (err.status === 400) {
+          this.errorMessage = 'Email invalide.';
+        } else {
+          this.errorMessage = 'Une erreur est survenue lors de l\'inscription.';
+        }
       }
     });
   }

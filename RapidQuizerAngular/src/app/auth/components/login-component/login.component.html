@@ -1,6 +1,11 @@
 <div class="login-page">
   <div class="login-box">
     <h1>Connexion</h1>
+
+    <div class="error-message" *ngIf="errorMessage">
+      {{ errorMessage }}
+    </div>
+
     <form (ngSubmit)="login()" #loginForm="ngForm">
       <div class="form-group">
         <label for="email">Email</label>
