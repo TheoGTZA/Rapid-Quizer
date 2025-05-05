@@ -46,4 +46,10 @@ export class NavbarComponent implements OnInit {
     return canAdd;
   }
 
+  logout(event: Event): void {
+    event.preventDefault();
+    this.authService.logout();
+    window.location.href = '/';
+  }
+
 }

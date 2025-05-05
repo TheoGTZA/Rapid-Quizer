@@ -28,6 +28,16 @@
         <i class="fa fa-shopping-cart"></i>
         <span class="badge">{{ panierService.totalAmount }}</span>
       </a>
+      <ng-container *ngIf="!authService.isLoggedIn(); else logoutButton">
+        <a class="nav-link" routerLink="/login">
+          <i class="fas fa-sign-in-alt"></i> Connexion
+        </a>
+      </ng-container>
+      <ng-template #logoutButton>
+        <a class="nav-link" href="#" (click)="logout($event)">
+          <i class="fas fa-sign-out-alt"></i> Déconnexion
+        </a>
+      </ng-template>
     </div>
   </div>
 </nav>

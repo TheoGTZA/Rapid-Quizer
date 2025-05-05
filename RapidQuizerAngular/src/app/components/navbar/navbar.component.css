@@ -64,6 +64,13 @@
   background-color: #3498db;
 }
 
+.nav-link i {
+  margin-right: 5px;
+}
+
+.nav-link:hover {
+  color: #4a5568;
+}
 
 
 
