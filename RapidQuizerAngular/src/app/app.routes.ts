@@ -12,8 +12,19 @@ export const routes: Routes = [
   { path: 'latex-to-json', component: LatexToJsonComponent },
   { path: 'questions', component: QuestionListComponent },
   { path: 'panier', component: PanierComponent },
+  { 
+    path: 'my-questions', 
+    component: QuestionListComponent,
+    canActivate: [AuthGuard],
+    data: { requiresAuth: true }
+  },
   { path: 'register', component: RegisterComponent },
   { path: 'login', component: LoginComponent },
-  { path: 'add', component: AddComponent, canActivate: [AuthGuard] },
-  { path: '**', redirectTo: '/latex-to-json' } 
+  { 
+    path: 'add', 
+    component: AddComponent, 
+    canActivate: [AuthGuard],
+    data: { roles: ['ADMIN', 'CONTRIBUTOR', 'USER'] }
+  },
+  { path: '**', redirectTo: '/latex-to-json' }
 ];

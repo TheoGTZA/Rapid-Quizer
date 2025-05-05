@@ -26,4 +26,11 @@ public class Question {
     @ManyToOne
     @JoinColumn(name = "category_id")
     private Category category;
+
+    @ManyToOne
+    @JoinColumn(name = "creator_id")
+    private User creator;
+
+    @Column(name = "is_personal", nullable = false)
+    private boolean isPersonal = false;
 }

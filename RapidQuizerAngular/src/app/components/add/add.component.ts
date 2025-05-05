@@ -3,13 +3,13 @@ import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Category } from '../../models/category';
 import { firstValueFrom } from 'rxjs';
-import {NgForOf} from '@angular/common';
-
+import {CommonModule, NgForOf} from '@angular/common';
+import { AuthService } from '../../auth/services/auth.service';
 @Component({
   selector: 'app-add',
   templateUrl: './add.component.html',
   styleUrls: ['./add.component.css'],
-  imports: [FormsModule, HttpClientModule, NgForOf]
+  imports: [FormsModule, HttpClientModule, NgForOf, CommonModule]
 })
 export class AddComponent {
   file: any;
@@ -17,34 +17,52 @@ export class AddComponent {
   selectedCategory: number;
   newCategory: { name: string; parentId: number | null } = { name: '', parentId: null };
   fileError: string | null = null;
-  newData : { question: string; answers: string[]; correct: boolean[]} = {question: '', answers: [], correct: []};
+  newData : { question: string; answers: string[]; correct: boolean[], isPersonal: boolean} = {question: '', answers: [], correct: [], isPersonal: false};
   nbAnswers: number = 4;
   inputs: number[] = [];
+  canChooseQuestionType: boolean = false;
+  canCreateCategory: boolean = false;
+  private apiUrl = 'http://localhost:8080';
+
+  private getHttpOptions() {
+    return {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': `Bearer ${this.authService.getToken()}`
+      })
+    };
+  }
 
 
-  private httpOptions = {
-    headers: new HttpHeaders({
-      'Content-Type': 'application/json',
-      'Accept': 'application/json'
-    })
-  };
-
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private authService: AuthService) {
     this.updateNbInputs();
   }
 
   ngOnInit() {
     this.loadCategories();
+    const userRole = this.authService.getUserRole();
+    this.canChooseQuestionType = userRole === 'ADMIN' || userRole === 'CONTRIBUTOR';
+    this.canCreateCategory = userRole === 'ADMIN';
   }
 
   loadCategories() {
-    this.http.get<Category[]>('/api/categories', this.httpOptions).subscribe({
+    console.log('Loading categories...');
+    console.log('Auth token:', this.authService.getToken()); // Debug token
+  
+    this.http.get<Category[]>(
+      `${this.apiUrl}/api/categories`, 
+      this.getHttpOptions()
+    ).subscribe({
       next: (data: Category[]) => {
-        console.log('Categories loaded:', data);
+        console.log('Categories loaded successfully:', data);
         this.categories = data;
       },
       error: (error) => {
         console.error('Error loading categories:', error);
+        if (error.status === 403) {
+          console.error('Authorization error - check your token');
+        }
       }
     });
   }
@@ -83,9 +101,12 @@ export class AddComponent {
     console.log('FormData content:', formData.get('file'));
 
     try {
-      const response = await fetch('/api/upload', {
+      const response = await fetch(`${this.apiUrl}/api/upload`, {
         method: 'POST',
         body: formData,
+        headers: {
+          'Authorization': `Bearer ${this.authService.getToken()}`
+        }
       });
 
       const contentType = response.headers.get('Content-Type');
@@ -112,27 +133,33 @@ export class AddComponent {
       console.error('Category name is required');
       return;
     }
-
+  
     try {
       const categoryToCreate = {
         name: this.newCategory.name,
         parent: this.newCategory.parentId ? { id: this.newCategory.parentId } : null
       };
-
-      console.log('Sending category:', categoryToCreate); // Pour déboguer
-
-      const response = await firstValueFrom(
-        this.http.post<Category>('/api/categories', categoryToCreate, this.httpOptions)
+  
+      console.log('Attempting to create category:', categoryToCreate);
+      
+      const result = await firstValueFrom(
+        this.http.post<Category>(
+          `${this.apiUrl}/api/categories`,
+          categoryToCreate,
+          this.getHttpOptions()
+        )
       );
-
-      console.log('Category created:', response);
+  
+      console.log('Category created successfully:', result);
       await this.loadCategories();
       this.newCategory = { name: '', parentId: null };
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error creating category:', error);
+      if (error.status === 403) {
+        console.error('Authorization error - make sure you have ADMIN role');
+      }
     }
   }
-
   updateNbInputs() {
     this.inputs = Array(this.nbAnswers).fill(0);
     this.newData.correct = Array(this.nbAnswers).fill(false);
@@ -146,48 +173,47 @@ export class AddComponent {
   }
 
   async uploadQuestionAnswers() {
-
     if (!this.newData.question) {
       console.error("Enter a question");
       return;
     }
-
+  
     if (!this.selectedCategory) {
       console.error('No category selected');
       return;
     }
-
-    let formData = new FormData();
-    formData.append('question', this.newData.question);
-    formData.append(`answers`, JSON.stringify(this.newData.answers));
-    formData.append('category', this.selectedCategory.toString());
-    formData.append('correct', JSON.stringify(this.newData.correct));
-
-    console.log('FormData content:', formData.get(`answers`));
-
+  
     try {
-      const response = await fetch('/api/uploadqa', {
-        method: 'POST',
-        body: formData,
-      });
-
-      const contentType = response.headers.get('Content-Type');
-      let result;
-      if (contentType && contentType.includes('application/json')) {
-        result = await response.json();
-      } else {
-        result = await response.text();
-      }
-      console.log('Response JSON:', result);
-
-      if (response.ok) {
-        this.newData.question = null;
-        this.newData.answers = [];
-        console.log('Question and answers cleared after successful upload');
-      }
-
+      const requestData = {
+        question: this.newData.question,
+        answers: this.newData.answers,
+        category: this.selectedCategory,
+        correct: this.newData.correct,
+        isPersonal: this.newData.isPersonal
+      };
+  
+      console.log('Sending question data:', requestData);
+  
+      const result = await firstValueFrom(
+        this.http.post(
+          `${this.apiUrl}/api/uploadqa`,
+          requestData,
+          this.getHttpOptions()
+        )
+      );
+  
+      console.log('Response:', result);
+  
+      this.newData = {
+        question: '',
+        answers: [],
+        correct: [],
+        isPersonal: false
+      };
+      this.updateNbInputs();
+  
     } catch (error) {
-      console.error('Error uploading q/a:', error);
+      console.error('Error uploading question:', error);
     }
   }
 
