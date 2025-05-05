@@ -18,18 +18,18 @@ public class UserService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    public User registerUser(String email, String password, Set<Role> roles) {
+    public User registerUser(String email, String password, Role role) {
         User user = new User();
         user.setEmail(email);
         user.setPassword(passwordEncoder.encode(password));
-        user.setRoles(roles);
+        user.setRole(role);
         return userRepository.save(user);
     }
 
     public User assignRole(String email, Role role) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("Utilisateur non trouvé : " + email));
-        user.getRoles().add(role);
+        user.setRole(role);
         return userRepository.save(user);
     }
 }

@@ -9,6 +9,8 @@ import { AppComponent } from './app.component';
 import { LatexToJsonComponent } from './components/latex-to-json/latex-to-json.component';
 import { NavbarComponent } from './components/navbar/navbar.component';
 import {PanierComponent} from './components/panier/panier.component';
+import { LoginComponent } from './auth/components/login-component/login.component';
+import { RegisterComponent } from './auth/components/register/register.component';
 
 @NgModule({
   declarations: [
@@ -23,7 +25,9 @@ import {PanierComponent} from './components/panier/panier.component';
     AppComponent,
     LatexToJsonComponent,
     NavbarComponent,
-    PanierComponent
+    PanierComponent,
+    LoginComponent,
+    RegisterComponent,
   ],
   providers: [],
   bootstrap: [AppComponent]

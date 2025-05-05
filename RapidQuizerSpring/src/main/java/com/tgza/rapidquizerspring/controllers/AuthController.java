@@ -45,7 +45,7 @@ public class AuthController {
         User user = userService.registerUser(
                 registerRequest.getEmail(),
                 registerRequest.getPassword(),
-                Set.of(Role.USER)
+                Role.USER
         );
         return ResponseEntity.ok(user);
     }

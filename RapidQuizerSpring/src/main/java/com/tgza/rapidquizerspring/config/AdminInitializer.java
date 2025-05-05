@@ -21,11 +21,11 @@ public class AdminInitializer {
 
     @PostConstruct
     public void initializeAdmin() {
-        if (userRepository.findByRolesContaining(Role.ADMIN).isEmpty()) {
+        if (userRepository.findByRole(Role.ADMIN).isEmpty()) {
             User admin = new User();
             admin.setEmail("admin@example.com");
             admin.setPassword(passwordEncoder.encode("admin123"));
-            admin.setRoles(Set.of(Role.ADMIN));
+            admin.setRole(Role.ADMIN);
             userRepository.save(admin);
             System.out.println("Administrateur par défaut créé : admin@example.com / admin123");
         }

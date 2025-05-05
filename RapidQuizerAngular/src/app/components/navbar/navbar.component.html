@@ -5,7 +5,12 @@
     </a>
 
     <div class="navbar-nav">
-      <a class="nav-link" routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+      <a
+        class="nav-link"
+        routerLink="/"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }"
+      >
         <i class="fas fa-home me-1"></i> Accueil
       </a>
       <a class="nav-link" routerLink="/questions" routerLinkActive="active">
@@ -19,6 +24,5 @@
         <span class="badge">{{ panierService.totalAmount }}</span>
       </a>
     </div>
-
   </div>
 </nav>
