@@ -50,6 +50,7 @@ export class AddComponent {
     console.log('Loading categories...');
     console.log('Auth token:', this.authService.getToken()); // Debug token
 
+
     this.http.get<Category[]>(
       `${this.apiUrl}/api/categories`,
       this.getHttpOptions()
@@ -93,6 +94,7 @@ export class AddComponent {
       console.error('No category selected');
       return;
     }
+
 
     let formData = new FormData();
     formData.append('file', this.file);
@@ -222,5 +224,6 @@ export class AddComponent {
       console.error('Error uploading question:', error);
     }
   }
+
 
 }

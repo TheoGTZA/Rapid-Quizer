@@ -6,6 +6,7 @@ import { Observable, tap } from 'rxjs';
   providedIn: 'root'
 })
 export class AuthService {
+
   private apiUrl = 'http://localhost:8080/api';
   private httpOptions = {
     headers: new HttpHeaders({
@@ -73,5 +74,7 @@ export class AuthService {
     const userRole = this.getUserRole();
     return userRole ? roles.includes(userRole) : false;
   }
+
+
   
 }

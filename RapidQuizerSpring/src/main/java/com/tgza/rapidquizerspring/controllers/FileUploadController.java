@@ -2,12 +2,11 @@ package com.tgza.rapidquizerspring.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.tgza.rapidquizerspring.entities.Answer;
-import com.tgza.rapidquizerspring.entities.Category;
-import com.tgza.rapidquizerspring.entities.Question;
+import com.tgza.rapidquizerspring.entities.*;
 import com.tgza.rapidquizerspring.repositories.CategoryRepository;
 import com.tgza.rapidquizerspring.repositories.QuestionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -31,8 +30,13 @@ public class FileUploadController {
     @PostMapping("/upload")
     public String handleFileUpload(@RequestParam("file") MultipartFile file,
                                    @RequestParam("category") Long categoryId,
-                                   @RequestParam("isPersonal") boolean isPersonal) {
+                                   @RequestParam("isPersonal") boolean isPersonal,
+                                   @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+
+        User user = customUserDetails.getUser();
         try {
+            System.out.println("User ID: " + user.getId());
+            
             BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream()));
             StringBuilder content = new StringBuilder();
             String line;
@@ -61,6 +65,7 @@ public class FileUploadController {
             Question question = new Question();
             question.setText(questionText);
             question.setPersonal(isPersonal);
+            question.setCreator(user);
 
             // Pattern amélioré pour les réponses individuelles (supporte les deux formats)
             Pattern singleAnswerPattern = Pattern.compile(
@@ -117,8 +122,15 @@ public class FileUploadController {
                                  @RequestParam("answers") String answersJSON,
                                  @RequestParam("category") Long categoryId,
                                  @RequestParam("correct") String correctJSON,
-                                 @RequestParam("isPersonal") boolean p) {
+                                 @RequestParam("isPersonal") boolean p,
+                                 @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+
+        User user = customUserDetails.getUser();
+
         try {
+
+            System.out.println("User ID: " + user.getId());
+
             ObjectMapper mapper = new ObjectMapper();
             List<String> a = mapper.readValue(answersJSON, new TypeReference<List<String>>() {});
             List<String> c = mapper.readValue(correctJSON, new TypeReference<List<String>>() {});
@@ -131,6 +143,7 @@ public class FileUploadController {
             Question question = new Question();
             question.setText(q);
             question.setPersonal(p);
+            question.setCreator(user);
 
             List<Answer> answers = new ArrayList<>();
 
@@ -158,4 +171,5 @@ public class FileUploadController {
             return "Error processing file: " + e.getMessage();
         }
     }
+
 }
