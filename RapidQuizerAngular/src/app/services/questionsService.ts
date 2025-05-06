@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { Observable, catchError, retry, throwError } from 'rxjs';
 import { Question } from '../models/question';
 import { Category } from '../models/category';
@@ -10,7 +10,8 @@ import { Category } from '../models/category';
 export class QuestionService {
   private apiUrl = 'http://localhost:8080/api'; 
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient,) {}
+
 
   private handleError(error: HttpErrorResponse) {
     if (error.status === 0) {

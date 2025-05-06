@@ -8,6 +8,7 @@ import { FormsModule } from '@angular/forms';
 import { QuestionService } from '../../services/questionsService';
 import {PanierService} from '../../services/panier.service';
 import { LatexRenderService } from '../../services/latex-render.service';
+import { AuthService } from '../../auth/services/auth.service';
 
 declare global {
   interface Window {
@@ -63,7 +64,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit {
       next: (data) => {
         this.categories = data;
         this.categoriesTree = this.buildCategoryTree(data);
-        console.log('Category Tree:', this.categoriesTree);
+        console.log('Arbre de catégories', this.categoriesTree);
       },
       error: (error) => {
         console.error('Erreur lors du chargement des catégories:', error);

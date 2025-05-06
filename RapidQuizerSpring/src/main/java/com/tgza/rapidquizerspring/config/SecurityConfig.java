@@ -3,6 +3,7 @@ package com.tgza.rapidquizerspring.config;
 import com.tgza.rapidquizerspring.Services.CustomUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -28,7 +29,9 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/login", "/api/register").permitAll()
-                        .requestMatchers("/admin/**").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/categories/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/questions/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/categories/**").hasAuthority("ADMIN")
                         .requestMatchers("/api/categories/**").hasAuthority("ADMIN")
                         .requestMatchers("/exercises/add").hasAnyAuthority("ADMIN", "CONTRIBUTOR")
                         .requestMatchers("/exercises/**").hasAnyAuthority("ADMIN", "CONTRIBUTOR", "USER")
