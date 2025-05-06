@@ -45,15 +45,15 @@ export class QuestionListComponent implements OnInit, AfterViewInit {
     this.loadCategories();
     this.loadQuestions();
   }
-            
+
   ngAfterViewInit() {
     setTimeout(() => this.renderMath(), 0);
   }
-            
+
   renderLatex(text: string): string {
   return this.latexService.cleanLatex(text);
   }
-            
+
   renderMath() {
   this.latexService.renderMath();
   }
@@ -135,9 +135,20 @@ export class QuestionListComponent implements OnInit, AfterViewInit {
     this.isSidebarVisible = !this.isSidebarVisible;
   }
 
+  shuffleArray<T>(array: T[]): T[] {
+    // copie pour ne pas modifier l'Array originel
+    const result = [...array];
+    for (let i = result.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [result[i], result[j]] = [result[j], result[i]];
+    }
+    return result;
+  }
+
   loadQuestions() {
     this.questionService.getQuestions().subscribe({
       next: (data) => {
+        data = this.shuffleArray(data);
         this.questions = data;
         this.latexService.resetMathRendered();
         setTimeout(() => this.renderMath(), 100);
@@ -156,6 +167,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit {
     if (categoryId) {
       this.questionService.getQuestionsByCategory(categoryId).subscribe({
         next: (data) => {
+          data = this.shuffleArray(data);
           this.questions = data;
           this.latexService.resetMathRendered();
           requestAnimationFrame(() => {
@@ -170,6 +182,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit {
       });
     } else {
       this.loadQuestions();
+      this.loading = false;
     }
   }
 
