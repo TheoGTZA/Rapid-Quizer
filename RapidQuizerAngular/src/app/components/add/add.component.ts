@@ -49,9 +49,9 @@ export class AddComponent {
   loadCategories() {
     console.log('Loading categories...');
     console.log('Auth token:', this.authService.getToken()); // Debug token
-  
+
     this.http.get<Category[]>(
-      `${this.apiUrl}/api/categories`, 
+      `${this.apiUrl}/api/categories`,
       this.getHttpOptions()
     ).subscribe({
       next: (data: Category[]) => {
@@ -97,6 +97,7 @@ export class AddComponent {
     let formData = new FormData();
     formData.append('file', this.file);
     formData.append('category', this.selectedCategory.toString());
+    formData.append('isPersonal', this.newData.isPersonal.toString());
 
     console.log('FormData content:', formData.get('file'));
 
@@ -133,15 +134,15 @@ export class AddComponent {
       console.error('Category name is required');
       return;
     }
-  
+
     try {
       const categoryToCreate = {
         name: this.newCategory.name,
         parent: this.newCategory.parentId ? { id: this.newCategory.parentId } : null
       };
-  
+
       console.log('Attempting to create category:', categoryToCreate);
-      
+
       const result = await firstValueFrom(
         this.http.post<Category>(
           `${this.apiUrl}/api/categories`,
@@ -149,7 +150,7 @@ export class AddComponent {
           this.getHttpOptions()
         )
       );
-  
+
       console.log('Category created successfully:', result);
       await this.loadCategories();
       this.newCategory = { name: '', parentId: null };
@@ -160,6 +161,7 @@ export class AddComponent {
       }
     }
   }
+
   updateNbInputs() {
     this.inputs = Array(this.nbAnswers).fill(0);
     this.newData.correct = Array(this.nbAnswers).fill(false);
@@ -177,33 +179,37 @@ export class AddComponent {
       console.error("Enter a question");
       return;
     }
-  
+
     if (!this.selectedCategory) {
       console.error('No category selected');
       return;
     }
-  
+
     try {
-      const requestData = {
-        question: this.newData.question,
-        answers: this.newData.answers,
-        category: this.selectedCategory,
-        correct: this.newData.correct,
-        isPersonal: this.newData.isPersonal
-      };
-  
-      console.log('Sending question data:', requestData);
-  
+      const formData = new FormData();
+      formData.append('question', this.newData.question);
+      formData.append('answers', JSON.stringify(this.newData.answers));
+      formData.append('category', this.selectedCategory.toString());
+      formData.append('correct', JSON.stringify(this.newData.correct));
+      formData.append('isPersonal', this.newData.isPersonal.toString());
+
+      console.log('Sending question data:', formData);
+
       const result = await firstValueFrom(
         this.http.post(
           `${this.apiUrl}/api/uploadqa`,
-          requestData,
-          this.getHttpOptions()
+          formData,
+          {
+            headers: new HttpHeaders({
+              'Authorization': `Bearer ${this.authService.getToken()}`
+            }),
+            responseType: 'text'
+          }
         )
       );
-  
+
       console.log('Response:', result);
-  
+
       this.newData = {
         question: '',
         answers: [],
@@ -211,7 +217,7 @@ export class AddComponent {
         isPersonal: false
       };
       this.updateNbInputs();
-  
+
     } catch (error) {
       console.error('Error uploading question:', error);
     }

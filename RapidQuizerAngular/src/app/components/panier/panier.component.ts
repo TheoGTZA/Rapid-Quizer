@@ -80,6 +80,16 @@ export class PanierComponent implements OnInit, AfterViewInit {
     this.loadCartQuestions();
   }
 
+  shuffleArray<T>(array: T[]): T[] {
+    // copie pour ne pas modifier l'Array originel
+    const result = [...array];
+    for (let i = result.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [result[i], result[j]] = [result[j], result[i]];
+    }
+    return result;
+  }
+
   generateTEX() {
     let latex : string = "";
     latex += `\\documentclass[a4paper]{article}\n%-------------------------::== package ==::---------------------------
@@ -93,6 +103,8 @@ export class PanierComponent implements OnInit, AfterViewInit {
     \\usepackage{mathrsfs}\n\\usepackage{textcomp}\n\n\n\n\n`;
 
     latex += `\\begin{document}\n\n`;
+
+    this.cartQuestions = this.shuffleArray(this.cartQuestions);
 
     for (let i : number = 0 ; i < this.cartQuestions.length ; i++) {
       latex += `\\element{${this.cartQuestions[i].category.name}}{\n\\begin{questionmult}{Question ${i+1}}

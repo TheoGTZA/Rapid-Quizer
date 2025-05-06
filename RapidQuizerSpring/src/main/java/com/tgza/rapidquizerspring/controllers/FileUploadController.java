@@ -29,7 +29,9 @@ public class FileUploadController {
     private CategoryRepository categoryRepository;
 
     @PostMapping("/upload")
-    public String handleFileUpload(@RequestParam("file") MultipartFile file, @RequestParam("category") Long categoryId) {
+    public String handleFileUpload(@RequestParam("file") MultipartFile file,
+                                   @RequestParam("category") Long categoryId,
+                                   @RequestParam("isPersonal") boolean isPersonal) {
         try {
             BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream()));
             StringBuilder content = new StringBuilder();
@@ -58,6 +60,7 @@ public class FileUploadController {
 
             Question question = new Question();
             question.setText(questionText);
+            question.setPersonal(isPersonal);
 
             // Pattern amélioré pour les réponses individuelles (supporte les deux formats)
             Pattern singleAnswerPattern = Pattern.compile(
@@ -110,7 +113,11 @@ public class FileUploadController {
     }
 
     @PostMapping("/uploadqa")
-    public String handleQAUpload(@RequestParam("question") String q, @RequestParam("answers") String answersJSON, @RequestParam("category") Long categoryId, @RequestParam("correct") String correctJSON) {
+    public String handleQAUpload(@RequestParam("question") String q,
+                                 @RequestParam("answers") String answersJSON,
+                                 @RequestParam("category") Long categoryId,
+                                 @RequestParam("correct") String correctJSON,
+                                 @RequestParam("isPersonal") boolean p) {
         try {
             ObjectMapper mapper = new ObjectMapper();
             List<String> a = mapper.readValue(answersJSON, new TypeReference<List<String>>() {});
@@ -119,9 +126,11 @@ public class FileUploadController {
             System.out.println("Question: " + q);
             System.out.println("Answers: " + a);
             System.out.println("Correct: " + c);
+            System.out.println("isPersonal: " + p);
 
             Question question = new Question();
             question.setText(q);
+            question.setPersonal(p);
 
             List<Answer> answers = new ArrayList<>();
 

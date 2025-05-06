@@ -1,9 +1,7 @@
 package com.tgza.rapidquizerspring.Services;
 
-import com.tgza.rapidquizerspring.entities.PersonalQuestion;
 import com.tgza.rapidquizerspring.entities.Question;
 import com.tgza.rapidquizerspring.entities.User;
-import com.tgza.rapidquizerspring.repositories.PersonalQuestionRepository;
 import com.tgza.rapidquizerspring.repositories.QuestionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

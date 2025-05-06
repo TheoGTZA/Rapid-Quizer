@@ -45,11 +45,11 @@
     <textarea
       (input)="onInputChange($event)"
       [(ngModel)]="newData.question"
-      placeholder="Your question here"
+      placeholder="Insérez votre question.."
     ></textarea>
   </div>
   <div class="nbOfAnswers">
-    <div>Number of answers :</div>
+    <div>Nombre de réponses :</div>
     <input
       type="number"
       [(ngModel)]="nbAnswers"
@@ -62,7 +62,7 @@
       <textarea
         (input)="onInputChange($event)"
         [(ngModel)]="newData.answers[i]"
-        placeholder="Answer {{ i + 1 }}"
+        placeholder="Réponse {{ i + 1 }}"
       ></textarea>
       <input type="checkbox" [(ngModel)]="newData.correct[i]" />
     </div>
