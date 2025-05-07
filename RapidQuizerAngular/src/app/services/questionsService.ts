@@ -40,6 +40,9 @@ export class QuestionService {
   }
 
   getQuestionsPersonal(): Observable<Question[]> {
+    // Recup le user id !!
+    const token = localStorage.getItem('token');
+    console.log(token);
     this.qPersonal = this.http.get<Question[]>(`${this.apiUrl}/questions/personal`).pipe(
       retry(3),
       catchError(this.handleError)

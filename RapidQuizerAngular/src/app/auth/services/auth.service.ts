@@ -19,15 +19,15 @@ export class AuthService {
 
   login(email: string, password: string): Observable<string> {
     return this.http.post<string>(
-      `${this.apiUrl}/login`, 
+      `${this.apiUrl}/login`,
       { email, password },
       this.httpOptions
     ).pipe(
       tap((response: string) => {
-        // Store the token in local storage
-        localStorage.setItem('token', response);
-      }
-    ));
+          // Store the token in local storage
+          localStorage.setItem('token', response);
+        }
+      ));
   }
 
   register(email: string, password: string): Observable<any> {
@@ -78,5 +78,5 @@ export class AuthService {
   }
 
 
-  
+
 }

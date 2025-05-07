@@ -17,6 +17,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 @RestController
@@ -34,7 +36,7 @@ public class AuthController {
 
     // Endpoint pour la connexion
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest) {
+    public LoginResponse login(@RequestBody LoginRequest loginRequest) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword())
         );
@@ -45,7 +47,10 @@ public class AuthController {
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
         String token = jwtUtil.generateToken(loginRequest.getEmail(), user.getRole().toString());
-        return ResponseEntity.ok(token);
+
+        System.out.println(token + " / " + user.getId() + " / " + user.getRole());
+
+        return new LoginResponse(token, user.getId(), user.getRole());
     }
 
     // Endpoint pour la création de compte
