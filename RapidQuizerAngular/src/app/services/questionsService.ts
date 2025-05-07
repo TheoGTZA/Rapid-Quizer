@@ -8,7 +8,9 @@ import { Category } from '../models/category';
   providedIn: 'root'
 })
 export class QuestionService {
-  private apiUrl = 'http://localhost:8080/api'; 
+  private apiUrl = 'http://localhost:8080/api';
+  private qPublic: Observable<Question[]>;
+  private qPersonal: Observable<Question[]>;
 
   constructor(private http: HttpClient,) {}
 
@@ -29,15 +31,31 @@ export class QuestionService {
     );
   }
 
-  getQuestions(): Observable<Question[]> {
-    return this.http.get<Question[]>(`${this.apiUrl}/questions`).pipe(
+  getQuestionsPublic(): Observable<Question[]> {
+    this.qPublic = this.http.get<Question[]>(`${this.apiUrl}/questions/public`).pipe(
+      retry(3),
+      catchError(this.handleError)
+    );
+    return this.qPublic;
+  }
+
+  getQuestionsPersonal(): Observable<Question[]> {
+    this.qPersonal = this.http.get<Question[]>(`${this.apiUrl}/questions/personal`).pipe(
+      retry(3),
+      catchError(this.handleError)
+    );
+    return this.qPersonal;
+  }
+
+  getQuestionsByCategoryPublic(categoryId: number): Observable<Question[]> {
+    return this.http.get<Question[]>(`${this.apiUrl}/questions/category/${categoryId}/public`).pipe(
       retry(3),
       catchError(this.handleError)
     );
   }
 
-  getQuestionsByCategory(categoryId: number): Observable<Question[]> {
-    return this.http.get<Question[]>(`${this.apiUrl}/questions/category/${categoryId}`).pipe(
+  getQuestionsByCategoryPersonal(categoryId: number): Observable<Question[]> {
+    return this.http.get<Question[]>(`${this.apiUrl}/questions/category/${categoryId}/personal`).pipe(
       retry(3),
       catchError(this.handleError)
     );

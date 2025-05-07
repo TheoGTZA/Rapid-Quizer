@@ -27,6 +27,8 @@ declare global {
 
 
 export class QuestionListComponent implements OnInit, AfterViewInit {
+  questionsPublic: Question[] = [];
+  questionsPersonal: Question[] = [];
   questions: Question[] = [];
   categories: Category[] = [];
   selectedCategoryId: number | null = null;
@@ -55,7 +57,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit {
   }
 
   renderMath() {
-  this.latexService.renderMath();
+    this.latexService.renderMath();
   }
 
 
@@ -146,10 +148,23 @@ export class QuestionListComponent implements OnInit, AfterViewInit {
   }
 
   loadQuestions() {
-    this.questionService.getQuestions().subscribe({
+    this.questionService.getQuestionsPublic().subscribe({
       next: (data) => {
         data = this.shuffleArray(data);
-        this.questions = data;
+        this.questionsPublic = data;
+        this.questions = [...this.questionsPersonal, ...this.questionsPublic];
+        this.latexService.resetMathRendered();
+        setTimeout(() => this.renderMath(), 100);
+      },
+      error: (error) => {
+        console.error('Error loading questions:', error);
+      }
+    });
+    this.questionService.getQuestionsPersonal().subscribe({
+      next: (data) => {
+        data = this.shuffleArray(data);
+        this.questionsPersonal = data;
+        this.questions = [...this.questionsPersonal, ...this.questionsPublic];
         this.latexService.resetMathRendered();
         setTimeout(() => this.renderMath(), 100);
       },
@@ -165,10 +180,27 @@ export class QuestionListComponent implements OnInit, AfterViewInit {
     this.loading = true;
 
     if (categoryId) {
-      this.questionService.getQuestionsByCategory(categoryId).subscribe({
+      this.questionService.getQuestionsByCategoryPublic(categoryId).subscribe({
         next: (data) => {
           data = this.shuffleArray(data);
-          this.questions = data;
+          this.questionsPublic = data;
+          this.questions = [...this.questionsPersonal, ...this.questionsPublic];
+          this.latexService.resetMathRendered();
+          requestAnimationFrame(() => {
+            this.renderMath();
+            this.loading = false;
+          });
+        },
+        error: (error) => {
+          console.error('Error loading questions for category:', error);
+          this.loading = false;
+        }
+      });
+      this.questionService.getQuestionsByCategoryPersonal(categoryId).subscribe({
+        next: (data) => {
+          data = this.shuffleArray(data);
+          this.questionsPersonal = data;
+          this.questions = [...this.questionsPersonal, ...this.questionsPublic];
           this.latexService.resetMathRendered();
           requestAnimationFrame(() => {
             this.renderMath();

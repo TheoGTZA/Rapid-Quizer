@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface QuestionRepository extends JpaRepository<Question, Long> {
-    List<Question> findByCategoryId(Long categoryId);
+    List<Question> findByCategoryIdAndIsPersonal(Long categoryId, boolean isPersonal);
 
     List<Question> findByIsPersonal(boolean isPersonal);
     List<Question> findByCreator(User creator);

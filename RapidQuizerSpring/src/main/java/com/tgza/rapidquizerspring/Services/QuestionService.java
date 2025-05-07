@@ -18,8 +18,8 @@ public class QuestionService {
         return questionRepository.findAll();
     }
 
-    public List<Question> getQuestionsByCategory(Long categoryId) {
-        return questionRepository.findByCategoryId(categoryId);
+    public List<Question> getQuestionsByCategory(Long categoryId, boolean isPersonal) {
+        return questionRepository.findByCategoryIdAndIsPersonal(categoryId, isPersonal);
     }
 
     public Question getQuestionById(Long id) {

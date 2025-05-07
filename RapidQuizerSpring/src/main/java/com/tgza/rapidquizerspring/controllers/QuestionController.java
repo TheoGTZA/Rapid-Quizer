@@ -1,6 +1,7 @@
 package com.tgza.rapidquizerspring.controllers;
 
 import com.tgza.rapidquizerspring.Services.QuestionService;
+import com.tgza.rapidquizerspring.entities.CustomUserDetails;
 import com.tgza.rapidquizerspring.entities.Question;
 import com.tgza.rapidquizerspring.entities.User;
 import com.tgza.rapidquizerspring.enums.Role;
@@ -23,14 +24,19 @@ public class QuestionController {
     @Autowired
     private QuestionService questionService;
 
-    @GetMapping
-    public List<Question> getAllQuestions() {
-        return questionRepository.findAll();
+    //@GetMapping                Retourne toutes les questions, même celles qui n'appartiennent pas à l'user
+    //public List<Question> getAllQuestions() { return questionRepository.findAll(); }
+
+    @GetMapping("/category/{categoryId}/public")
+    public List<Question> getQuestionsByCategoryPublic(@PathVariable Long categoryId) {
+        List<Question> questions = questionRepository.findByCategoryIdAndIsPersonal(categoryId, false);
+        System.out.println("Questions found: " + questions.size()); // Debug log
+        return questions;
     }
 
-    @GetMapping("/category/{categoryId}")
-    public List<Question> getQuestionsByCategory(@PathVariable Long categoryId) {
-        List<Question> questions = questionRepository.findByCategoryId(categoryId);
+    @GetMapping("/category/{categoryId}/personal")
+    public List<Question> getQuestionsByCategoryPersonal(@PathVariable Long categoryId) {
+        List<Question> questions = questionRepository.findByCategoryIdAndIsPersonal(categoryId, true);
         System.out.println("Questions found: " + questions.size()); // Debug log
         return questions;
     }
@@ -42,9 +48,15 @@ public class QuestionController {
     }
 
     @GetMapping("/personal")
-    @PreAuthorize("isAuthenticated()")
-    public List<Question> getPersonalQuestions(@AuthenticationPrincipal User user) {
-        return questionRepository.findByIsPersonal(true);
+    @PreAuthorize("hasAnyAuthority('USER', 'CONTRIBUTOR', 'ADMIN')")
+    public List<Question> getPersonalQuestions(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        User user = customUserDetails.getUser();
+        if (user.getRole() == Role.USER || user.getRole() == Role.CONTRIBUTOR || user.getRole() == Role.ADMIN) {
+            return questionRepository.findByIsPersonal(true);
+        }
+        else {
+            return questionRepository.findByIsPersonal(false);
+        }
     }
 
     @PostMapping
