@@ -35,6 +35,8 @@ export class AuthService {
   }
 
   isLoggedIn(): boolean {
+    // les deux ! servent à convertir la valeur en booléen
+    // Si localStorage.getItem('token') est null ou undefined, !!localStorage.getItem('token') sera false
     return !!localStorage.getItem('token');
   }
 

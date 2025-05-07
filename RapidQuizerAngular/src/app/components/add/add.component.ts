@@ -17,7 +17,7 @@ export class AddComponent {
   selectedCategory: number;
   newCategory: { name: string; parentId: number | null } = { name: '', parentId: null };
   fileError: string | null = null;
-  newData : { question: string; answers: string[]; correct: boolean[], isPersonal: boolean} = {question: '', answers: [], correct: [], isPersonal: false};
+  newData : { question: string; answers: string[]; correct: boolean[], isPersonal: boolean} = {question: '', answers: [], correct: [], isPersonal: true};
   nbAnswers: number = 4;
   inputs: number[] = [];
   canChooseQuestionType: boolean = false;
@@ -93,6 +93,11 @@ export class AddComponent {
     if (!this.selectedCategory) {
       console.error('No category selected');
       return;
+    }
+
+    const userRole = this.authService.getUserRole();
+    if (userRole === 'USER') {
+      this.newData.isPersonal = true;
     }
 
 
@@ -187,6 +192,11 @@ export class AddComponent {
       return;
     }
 
+    const userRole = this.authService.getUserRole();
+    if (userRole === 'USER') {
+      this.newData.isPersonal = true;
+    }
+
     try {
       const formData = new FormData();
       formData.append('question', this.newData.question);
@@ -195,6 +205,7 @@ export class AddComponent {
       formData.append('correct', JSON.stringify(this.newData.correct));
       formData.append('isPersonal', this.newData.isPersonal.toString());
 
+      console.log('Is Personal:', this.newData.isPersonal);
       console.log('Sending question data:', formData);
 
       const result = await firstValueFrom(

@@ -39,11 +39,7 @@ export class NavbarComponent implements OnInit {
   // }
 
   canAddExercises(): boolean {
-    const userRole = this.authService.getUserRole();
-    console.log('Checking role:', userRole);
-    const canAdd = userRole === 'ADMIN' || userRole === 'CONTRIBUTOR';
-    console.log('Can add exercises:', canAdd);
-    return canAdd;
+    return this.authService.isLoggedIn();
   }
 
   logout(event: Event): void {
