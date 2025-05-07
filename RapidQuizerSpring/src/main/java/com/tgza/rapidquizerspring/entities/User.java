@@ -1,5 +1,6 @@
 package com.tgza.rapidquizerspring.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.tgza.rapidquizerspring.enums.Role;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -26,6 +27,7 @@ public class User {
     @Column(nullable = false)
     private Role role;
 
+    @JsonBackReference
     @OneToMany(mappedBy = "creator")
     private List<Question> questions;
 }

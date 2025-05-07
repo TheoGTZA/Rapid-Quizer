@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
-import { Observable, catchError, retry, throwError } from 'rxjs';
+import { Observable, catchError, retry, throwError, of } from 'rxjs';
 import { Question } from '../models/question';
 import { Category } from '../models/category';
 
@@ -40,13 +40,17 @@ export class QuestionService {
   }
 
   getQuestionsPersonal(): Observable<Question[]> {
-    // Recup le user id !!
     const token = localStorage.getItem('token');
-    console.log(token);
-    this.qPersonal = this.http.get<Question[]>(`${this.apiUrl}/questions/personal`).pipe(
-      retry(3),
-      catchError(this.handleError)
-    );
+    if (token != null) {
+      const parsed = JSON.parse(token);
+      const id = parsed.userId;
+      this.qPersonal = this.http.get<Question[]>(`${this.apiUrl}/questions/personal/${id}`).pipe(
+        retry(3),
+        catchError(this.handleError)
+      );
+      return this.qPersonal;
+    }
+    this.qPersonal = of([]);
     return this.qPersonal;
   }
 

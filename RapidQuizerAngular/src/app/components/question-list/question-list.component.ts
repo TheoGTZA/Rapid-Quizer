@@ -150,9 +150,9 @@ export class QuestionListComponent implements OnInit, AfterViewInit {
   loadQuestions() {
     this.questionService.getQuestionsPublic().subscribe({
       next: (data) => {
-        data = this.shuffleArray(data);
         this.questionsPublic = data;
         this.questions = [...this.questionsPersonal, ...this.questionsPublic];
+        this.questions = this.shuffleArray(this.questions);
         this.latexService.resetMathRendered();
         setTimeout(() => this.renderMath(), 100);
       },
@@ -160,18 +160,22 @@ export class QuestionListComponent implements OnInit, AfterViewInit {
         console.error('Error loading questions:', error);
       }
     });
-    this.questionService.getQuestionsPersonal().subscribe({
-      next: (data) => {
-        data = this.shuffleArray(data);
-        this.questionsPersonal = data;
-        this.questions = [...this.questionsPersonal, ...this.questionsPublic];
-        this.latexService.resetMathRendered();
-        setTimeout(() => this.renderMath(), 100);
-      },
-      error: (error) => {
-        console.error('Error loading questions:', error);
-      }
-    });
+    try {
+      this.questionService.getQuestionsPersonal().subscribe({
+        next: (data) => {
+          this.questionsPersonal = data;
+          this.questions = [...this.questionsPersonal, ...this.questionsPublic];
+          this.questions = this.shuffleArray(this.questions);
+          this.latexService.resetMathRendered();
+          setTimeout(() => this.renderMath(), 100);
+        },
+        error: (error) => {
+          console.error('Error loading questions:', error);
+        }
+      });
+    } catch (e) {
+    }
+
   }
 
   onCategoryChange(categoryId: number | null): void {
@@ -182,9 +186,9 @@ export class QuestionListComponent implements OnInit, AfterViewInit {
     if (categoryId) {
       this.questionService.getQuestionsByCategoryPublic(categoryId).subscribe({
         next: (data) => {
-          data = this.shuffleArray(data);
           this.questionsPublic = data;
           this.questions = [...this.questionsPersonal, ...this.questionsPublic];
+          this.questions = this.shuffleArray(this.questions);
           this.latexService.resetMathRendered();
           requestAnimationFrame(() => {
             this.renderMath();
@@ -198,9 +202,9 @@ export class QuestionListComponent implements OnInit, AfterViewInit {
       });
       this.questionService.getQuestionsByCategoryPersonal(categoryId).subscribe({
         next: (data) => {
-          data = this.shuffleArray(data);
           this.questionsPersonal = data;
           this.questions = [...this.questionsPersonal, ...this.questionsPublic];
+          this.questions = this.shuffleArray(this.questions);
           this.latexService.resetMathRendered();
           requestAnimationFrame(() => {
             this.renderMath();

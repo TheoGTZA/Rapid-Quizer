@@ -6,12 +6,14 @@ import com.tgza.rapidquizerspring.entities.Question;
 import com.tgza.rapidquizerspring.entities.User;
 import com.tgza.rapidquizerspring.enums.Role;
 import com.tgza.rapidquizerspring.repositories.QuestionRepository;
+import com.tgza.rapidquizerspring.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/questions")
@@ -23,6 +25,9 @@ public class QuestionController {
 
     @Autowired
     private QuestionService questionService;
+
+    @Autowired
+    private UserRepository userRepository;
 
     //@GetMapping                Retourne toutes les questions, même celles qui n'appartiennent pas à l'user
     //public List<Question> getAllQuestions() { return questionRepository.findAll(); }
@@ -47,16 +52,12 @@ public class QuestionController {
                 .orElseThrow(() -> new RuntimeException("Question not found"));
     }
 
-    @GetMapping("/personal")
+    @GetMapping("/personal/{id}")
     @PreAuthorize("hasAnyAuthority('USER', 'CONTRIBUTOR', 'ADMIN')")
-    public List<Question> getPersonalQuestions(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
-        User user = customUserDetails.getUser();
-        if (user.getRole() == Role.USER || user.getRole() == Role.CONTRIBUTOR || user.getRole() == Role.ADMIN) {
-            return questionRepository.findByIsPersonal(true);
-        }
-        else {
-            return questionRepository.findByIsPersonal(false);
-        }
+    public List<Question> getPersonalQuestions(@PathVariable Long id) {
+        Optional<User> creator = userRepository.findById(id);
+
+        return questionRepository.findByCreator(creator);
     }
 
     @PostMapping
