@@ -1,0 +1,58 @@
+<div class="register-page">
+  <div class="register-box">
+    <h1>Création de compte</h1>
+
+    <!-- Affichage des messages d'erreurs -->
+    <div class="error-message" *ngIf="errorMessage">
+      {{ errorMessage }}
+    </div>
+
+    <form (ngSubmit)="register()" #registerForm="ngForm">
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input
+          type="email"
+          id="email"
+          [(ngModel)]="email"
+          name="email"
+          required
+          placeholder="Entrez votre email"
+          class="form-control"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="password">Mot de passe</label>
+        <input
+          type="password"
+          id="password"
+          [(ngModel)]="password"
+          name="password"
+          required
+          placeholder="Entrez votre mot de passe"
+          class="form-control"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="confirmPassword">Confirmer le mot de passe</label>
+        <input
+          type="password"
+          id="confirmPassword"
+          [(ngModel)]="confirmPassword"
+          name="confirmPassword"
+          required
+          placeholder="Confirmez votre mot de passe"
+          class="form-control"
+        />
+      </div>
+
+      <button type="submit" class="submit-btn">S'inscrire</button>
+
+      <div class="login-link">
+        Déjà inscrit ?
+        <a routerLink="/login">Se connecter</a>
+      </div>
+    </form>
+  </div>
+</div>

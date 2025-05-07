@@ -1,0 +1,39 @@
+package com.tgza.rapidquizerspring.Services;
+
+import com.tgza.rapidquizerspring.entities.Question;
+import com.tgza.rapidquizerspring.entities.User;
+import com.tgza.rapidquizerspring.repositories.QuestionRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
+
+@Service
+public class QuestionService {
+
+    @Autowired
+    private QuestionRepository questionRepository;
+
+    public List<Question> getAllQuestions() {
+        return questionRepository.findAll();
+    }
+
+    public List<Question> getQuestionsByCategory(Long categoryId, boolean isPersonal) {
+        return questionRepository.findByCategoryIdAndIsPersonal(categoryId, isPersonal);
+    }
+
+    public Question getQuestionById(Long id) {
+        return questionRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Question not found"));
+    }
+
+    public Question createQuestion(Question question, User creator) {
+        return questionRepository.save(question);
+    }
+
+    public List<Question> getQuestionsByCreator(User creator) {
+        return questionRepository.findByCreator(Optional.ofNullable(creator));
+    }
+
+}

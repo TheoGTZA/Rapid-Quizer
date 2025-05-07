@@ -1,0 +1,64 @@
+<div class="cart-container">
+  <h2>Questions sélectionnées</h2>
+
+  <div *ngIf="cartQuestions.length === 0" class="empty-cart">
+    <p>Aucune question sélectionnée.</p>
+  </div>
+
+  <div *ngIf="cartQuestions.length > 0" class="questions-list">
+    <ul>
+      <li
+        *ngFor="let question of cartQuestions; let i = index"
+        class="question-item"
+      >
+        <div class="question-header">
+          <span class="question-number">Question {{ i + 1 }}</span>
+          <div class="question-actions">
+            <button
+              (click)="toggleAnswerForQuestion(question.id)"
+              class="toggle-answer-btn"
+            >
+              {{
+                isAnswerVisible(question.id)
+                  ? "Masquer les réponses"
+                  : "Afficher les réponses"
+              }}
+            </button>
+            <button (click)="removeQuestion(question.id)" class="remove-btn">
+              <i class="fas fa-trash"></i>
+            </button>
+          </div>
+        </div>
+
+        <div
+          [innerHTML]="renderLatex(question.text)"
+          class="question-text math"
+        ></div>
+
+        <div *ngIf="isAnswerVisible(question.id)" class="answers-section">
+          <div *ngFor="let answer of question.answers" class="answer-item">
+            <div
+              [innerHTML]="renderLatex(answer.text)"
+              [ngClass]="{
+                'correct-answer': answer.correct,
+                'incorrect-answer': !answer.correct
+              }"
+              class="math"
+            >
+              <span class="answer-indicator">{{
+                answer.correct ? "✓" : "✗"
+              }}</span>
+            </div>
+          </div>
+        </div>
+      </li>
+    </ul>
+
+    <div class="cart-actions">
+      <button (click)="generateTEX()" class="generate-btn">
+        Générer LaTeX
+      </button>
+      <button (click)="clearCart()" class="clear-btn">Vider le panier</button>
+    </div>
+  </div>
+</div>

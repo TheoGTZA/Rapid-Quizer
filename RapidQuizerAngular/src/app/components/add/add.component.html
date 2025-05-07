@@ -1,0 +1,86 @@
+<div *ngIf="canCreateCategory" class="create-category">
+  <h3>Créer une nouvelle catégorie</h3>
+  <div class="form-group">
+    <input [(ngModel)]="newCategory.name" placeholder="Nom de la catégorie" />
+    <select [(ngModel)]="newCategory.parentId">
+      <option [ngValue]="null">Pas de parent</option>
+      <option *ngFor="let cat of categories" [value]="cat.id">
+        {{ cat.name }}
+      </option>
+    </select>
+    <button (click)="createCategory()">Créer la catégorie</button>
+  </div>
+</div>
+
+<div class="file-zone">
+  <div class="file-container">
+    @if (!file) {
+    <input type="file" (change)="getFile($event)" class="file" />
+    @if (fileError) {
+    <div class="error-message">{{ fileError }}</div>
+    } } @if (file) {
+    <div>
+      File name: {{ file?.name }}
+      <br />
+      <button (click)="file = undefined">clear file</button>
+    </div>
+    }
+  </div>
+  <select class="choice-category" [(ngModel)]="selectedCategory">
+    @for (category of categories; track category.id) {
+    <option [value]="category.id">{{ category.name }}</option>
+    }
+  </select>
+</div>
+
+<div class="button-upload">
+  <button (click)="uploadFile()">upload file</button>
+</div>
+
+<div class="horizontal-line"></div>
+
+<div class="createDatas">
+  <div class="createQuestion">
+    <div>Question :</div>
+    <textarea
+      (input)="onInputChange($event)"
+      [(ngModel)]="newData.question"
+      placeholder="Insérez votre question.."
+    ></textarea>
+  </div>
+  <div class="nbOfAnswers">
+    <div>Nombre de réponses :</div>
+    <input
+      type="number"
+      [(ngModel)]="nbAnswers"
+      (input)="updateNbInputs()"
+      placeholder="4"
+    />
+  </div>
+  <div class="createAnswers">
+    <div class="Answer" *ngFor="let input of inputs; let i = index">
+      <textarea
+        (input)="onInputChange($event)"
+        [(ngModel)]="newData.answers[i]"
+        placeholder="Réponse {{ i + 1 }}"
+      ></textarea>
+      <input type="checkbox" [(ngModel)]="newData.correct[i]" />
+    </div>
+  </div>
+
+  <div class="question-type" *ngIf="canChooseQuestionType">
+    <label>
+      <input
+        type="checkbox"
+        [(ngModel)]="newData.isPersonal"
+        name="isPersonal"
+        [checked]="true"
+      />
+      Question personnelle
+    </label>
+  </div>
+</div>
+
+<div class="button-upload">
+  <button (click)="uploadQuestionAnswers()">upload q/a</button>
+</div>
