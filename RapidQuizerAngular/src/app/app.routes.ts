@@ -8,21 +8,21 @@ import { LoginComponent } from './auth/components/login-component/login.componen
 import { AuthGuard } from './auth/guards/auth/auth-guard.guard';
 
 export const routes: Routes = [
-  { path: '', redirectTo: '/latex-to-json', pathMatch: 'full' },
+  { path: '', redirectTo: 'latex-to-json', pathMatch: 'full' },
   { path: 'latex-to-json', component: LatexToJsonComponent },
   { path: 'questions', component: QuestionListComponent },
   { path: 'panier', component: PanierComponent },
-  { 
-    path: 'my-questions', 
+  {
+    path: 'my-questions',
     component: QuestionListComponent,
     canActivate: [AuthGuard],
     data: { requiresAuth: true }
   },
   { path: 'register', component: RegisterComponent },
   { path: 'login', component: LoginComponent },
-  { 
-    path: 'add', 
-    component: AddComponent, 
+  {
+    path: 'add',
+    component: AddComponent,
     canActivate: [AuthGuard],
     data: { roles: ['ADMIN', 'CONTRIBUTOR', 'USER'] }
   },

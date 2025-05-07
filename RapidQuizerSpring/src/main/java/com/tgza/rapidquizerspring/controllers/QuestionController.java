@@ -34,16 +34,14 @@ public class QuestionController {
 
     @GetMapping("/category/{categoryId}/public")
     public List<Question> getQuestionsByCategoryPublic(@PathVariable Long categoryId) {
-        List<Question> questions = questionRepository.findByCategoryIdAndIsPersonal(categoryId, false);
-        System.out.println("Questions found: " + questions.size()); // Debug log
-        return questions;
+        return questionRepository.findByCategoryIdAndIsPersonal(categoryId, false);
     }
 
-    @GetMapping("/category/{categoryId}/personal")
-    public List<Question> getQuestionsByCategoryPersonal(@PathVariable Long categoryId) {
-        List<Question> questions = questionRepository.findByCategoryIdAndIsPersonal(categoryId, true);
-        System.out.println("Questions found: " + questions.size()); // Debug log
-        return questions;
+    @GetMapping("/category/{categoryId}/personal/{id}")
+    @PreAuthorize("hasAnyAuthority('USER', 'CONTRIBUTOR', 'ADMIN')")
+    public List<Question> getQuestionsByCategoryPersonal(@PathVariable Long categoryId, @PathVariable Long id) {
+        Optional<User> creator = userRepository.findById(id);
+        return questionRepository.findByCategoryIdAndCreator(categoryId, creator);
     }
 
     @GetMapping("/{id}")

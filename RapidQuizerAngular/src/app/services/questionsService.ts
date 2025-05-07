@@ -55,16 +55,25 @@ export class QuestionService {
   }
 
   getQuestionsByCategoryPublic(categoryId: number): Observable<Question[]> {
-    return this.http.get<Question[]>(`${this.apiUrl}/questions/category/${categoryId}/public`).pipe(
+    this.qPublic = this.http.get<Question[]>(`${this.apiUrl}/questions/category/${categoryId}/public`).pipe(
       retry(3),
       catchError(this.handleError)
     );
+    return this.qPublic;
   }
 
   getQuestionsByCategoryPersonal(categoryId: number): Observable<Question[]> {
-    return this.http.get<Question[]>(`${this.apiUrl}/questions/category/${categoryId}/personal`).pipe(
-      retry(3),
-      catchError(this.handleError)
-    );
+    const token = localStorage.getItem('token');
+    if (token != null) {
+      const parsed = JSON.parse(token);
+      const id = parsed.userId;
+      this.qPersonal = this.http.get<Question[]>(`${this.apiUrl}/questions/category/${categoryId}/personal/${id}`).pipe(
+        retry(3),
+        catchError(this.handleError)
+      );
+      return this.qPersonal;
+    }
+    this.qPersonal = of([]);
+    return this.qPersonal;
   }
 }
