@@ -1,18 +1,39 @@
+.form-group {
+  display: flex;
+  gap: 20px;
+}
+
 .file-container{
   width: 600px;
   margin: auto;
   border: 4px dotted black;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 
-  .file{
-    opacity: 0;
-    padding: 5rem;
-    width: auto;
-    height: 5rem;
-  }
+.file{
+  opacity: 0;
+  padding: 5rem;
+  width: auto;
+  height: 5rem;
+}
+
+.file-container i {
+  position: absolute;
+  max-width: 600px;
+  object-fit: contain;
+  pointer-events: none;
+}
+
+.fa-upload {
+  font-size: 50px;
+  opacity: 0.3;
 }
 
 .create-category {
-  margin-top: 120px; 
+  margin-top: 120px;
   margin-bottom: 20px;
   padding: 15px;
   border: 1px solid #ccc;
@@ -56,26 +77,101 @@
   width: 90%;
   height: 2px;
   background-color: black;
-  margin: 80px auto 20px;
+  margin: 80px auto 80px;
+}
+
+.button {
+  display: flex;
+  justify-content: center;
 }
 
 .button-upload {
-  text-align: center;
-  margin-top: 30px;
+  position: relative;
+  transition: all 0.3s ease-in-out;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+  padding-block: 0.5rem;
+  padding-inline: 1.25rem;
+  background-color: rgb(0 107 179);
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffff;
+  gap: 10px;
+  font-weight: bold;
+  border: 3px solid #ffffff4d;
+  outline: none;
+  overflow: hidden;
+  font-size: 15px;
+  cursor: pointer;
 }
 
-.file-zone, .createQuestion, .nbOfAnswers, .Answer {
+.button-upload-icon {
+  width: 24px;
+  height: 24px;
+  transition: all 0.3s ease-in-out;
+}
+
+.button-upload:hover {
+  transform: scale(1.05);
+  border-color: #fff9;
+}
+
+.button-upload:hover .button-upload-icon {
+  transform: translate(4px);
+}
+
+.button-upload:hover::before {
+  animation: shine 1.5s ease-out infinite;
+}
+
+.button-upload::before {
+  content: "";
+  position: absolute;
+  width: 100px;
+  height: 100%;
+  background-image: linear-gradient(
+    120deg,
+    rgba(255, 255, 255, 0) 30%,
+    rgba(255, 255, 255, 0.8),
+    rgba(255, 255, 255, 0) 70%
+  );
+  top: 0;
+  left: -100px;
+  opacity: 0.6;
+}
+
+@keyframes shine {
+  0% {
+    left: -100px;
+  }
+
+  60% {
+    left: 100%;
+  }
+
+  to {
+    left: 100%;
+  }
+}
+
+
+
+.file-zone {
+  margin: 5vh auto;
+  width: 50%;
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+.createQuestion, .nbOfAnswers, .Answer {
   width: 50%;
   margin: auto;
   position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
-}
-
-.choice-category {
-  position: absolute;
-  right: 20px;
 }
 
 .createQuestion textArea, .nbOfAnswers input {
