@@ -1,3 +1,196 @@
 .page-container {
   margin-top: 100px;
 }
+
+
+/* Logo */
+
+.logo-img {
+  width: 400px;
+  height: 500px;
+  background-image: url('/assets/images/logo.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  margin: 5vh auto;
+  position: relative;
+}
+
+.logo-img:hover {
+  animation: glitch 0.3s steps(1, end);
+}
+
+@keyframes glitch {
+  0% {
+    transform: translateX(0);
+  }
+  33% {
+    transform: translateX(-2px) translateY(2px);
+  }
+  66% {
+    transform: translateX(2px);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+
+/* Sentence */
+
+.sentence {
+  text-align: center;
+  font-family: 'Orbitron', 'Segoe UI', sans-serif;
+  font-size: 1.2rem;
+  margin-bottom: 6vh;
+}
+
+
+/* Continue */
+
+.continue {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.continue p {
+  margin-bottom: 0px;
+}
+
+.continue a {
+  border: 4px solid black;
+  border-radius: 100%;
+  color: black;
+  text-decoration: none;
+  width: 60px;
+  height: 60px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 2em;
+  cursor: pointer;
+}
+
+.continue a:hover {
+  background-color: rgba(234, 234, 234, 0.85);
+}
+
+
+/* Content */
+
+.content {
+  display: flex;
+  margin-top: 20vh;
+  justify-content: space-evenly;
+}
+
+
+/* Utilisation */
+
+.utilisation {
+  font-family: 'Orbitron', 'Segoe UI', sans-serif;
+  scroll-margin-top: 22vh;
+  margin-left: 5vw;
+  flex: 1;
+}
+
+.home {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.exercice {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.add {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.shopping-basket {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.utilisation div i {
+  border: 4px solid black;
+  border-radius: 100%;
+  color: black;
+  text-decoration: none;
+  min-width: 60px;
+  min-height: 60px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.5em;
+}
+
+.utilisation div p {
+  font-size: 20px;
+  padding: 0;
+  margin: 40px 0;
+}
+
+
+/* Button */
+
+.button-connection {
+  width: 200px;
+  height: 60px;
+  background-image: url('/assets/images/button_wallpaper.png');
+  background-position: center;
+  border: none;
+  cursor: pointer;
+  color: white;
+  font-size: larger;
+}
+
+
+/* Rules */
+
+.rules-container {
+  max-width: 800px;
+  margin: 40px 5vw 40px auto;
+  padding: 30px;
+  background-color: #f9f9f9;
+  border-left: 6px solid #007BFF;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  font-family: 'Orbitron', 'Segoe UI', sans-serif;
+  color: #333;
+}
+
+.rules-container h2 {
+  font-size: 28px;
+  margin-bottom: 20px;
+  color: #007BFF;
+}
+
+.rules-container ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+.rules-container li {
+  margin-bottom: 15px;
+  padding-left: 30px;
+  position: relative;
+  line-height: 1.6;
+  font-size: 20px;
+}
+
+.rules-container li::before {
+  content: "⚆";
+  position: absolute;
+  left: 0;
+  color: #28a745;
+  font-weight: bold;
+}

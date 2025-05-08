@@ -10,4 +10,11 @@ import { firstValueFrom } from 'rxjs';
   styleUrls: ['./latex-to-json.component.css']
 })
 export class LatexToJsonComponent {
+
+  scrollToUtilisation() {
+    const util = document.getElementById('utilisation');
+    if (util) {
+      util.scrollIntoView({behavior: 'smooth'});
+    }
+  }
 }
