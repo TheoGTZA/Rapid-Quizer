@@ -6,8 +6,8 @@
 /* Logo */
 
 .logo-img {
-  width: 400px;
-  height: 500px;
+  width: 21vw;
+  height: 53vh;
   background-image: url('/assets/images/logo.png');
   background-size: contain;
   background-repeat: no-repeat;
@@ -140,24 +140,10 @@
 }
 
 
-/* Button */
-
-.button-connection {
-  width: 200px;
-  height: 60px;
-  background-image: url('/assets/images/button_wallpaper.png');
-  background-position: center;
-  border: none;
-  cursor: pointer;
-  color: white;
-  font-size: larger;
-}
-
-
 /* Rules */
 
 .rules-container {
-  max-width: 800px;
+  max-width: 40vw;
   margin: 40px 5vw 40px auto;
   padding: 30px;
   background-color: #f9f9f9;
