@@ -9,6 +9,7 @@ import com.tgza.rapidquizerspring.utils.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -73,9 +74,17 @@ public class AuthController {
 
     // Endpoint pour définir un rôle
     @PostMapping("/admin/assign-role")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<String> assignRole(@RequestBody RoleRequest roleRequest) {
         User user = userService.assignRole(roleRequest.getEmail(), roleRequest.getRole());
         return ResponseEntity.ok("Rôle attribué avec succès à " + user.getEmail());
+    }
+
+    @GetMapping("/admin/users")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Set<User>> getAllUsers() {
+        Set<User> users = userService.getAllUsers();
+        return ResponseEntity.ok(users);
     }
 
 }

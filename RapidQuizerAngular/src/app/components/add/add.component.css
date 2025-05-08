@@ -210,3 +210,34 @@
 .createAnswers textarea:focus, .createQuestion textarea:focus {
   outline: none;
 }
+
+.assign-role {
+  margin-top: 20px;
+  padding: 15px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 80%;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.assign-role input,
+.assign-role select {
+  margin: 5px;
+  padding: 5px;
+}
+
+.assign-role button {
+  margin: 5px;
+  padding: 5px 10px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.assign-role button:hover {
+  background-color: #45a049;
+}

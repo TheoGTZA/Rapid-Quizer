@@ -23,6 +23,7 @@ export class AddComponent {
   inputs: number[] = [];
   canChooseQuestionType: boolean = false;
   canCreateCategory: boolean = false;
+  users: any[] = [];
   private apiUrl = 'http://localhost:8080';
 
 
@@ -42,6 +43,7 @@ export class AddComponent {
 
   ngOnInit() {
     this.loadCategories();
+    this.loadUsers();
     const userRole = this.authService.getUserRole();
     this.canChooseQuestionType = userRole === 'ADMIN' || userRole === 'CONTRIBUTOR';
     this.canCreateCategory = userRole === 'ADMIN';
@@ -236,6 +238,48 @@ export class AddComponent {
       console.error('Error uploading question:', error);
     }
   }
+
+async assignRole(email: string, role: string): Promise<void> {
+  const roleRequest = { email, role };
+
+  try {
+    const result = await firstValueFrom(
+      this.http.post(
+        `${this.apiUrl}/api/admin/assign-role`,
+        roleRequest,
+        {
+          ...this.getHttpOptions(),
+          responseType: 'text'
+        }
+      )
+    );
+
+    console.log('Rôle attribué avec succès:', result);
+    alert(result); 
+  } catch (error: any) {
+    console.error('Erreur lors de l\'attribution du rôle:', error);
+    if (error.status === 403) {
+      alert('Erreur : Vous n\'avez pas les permissions nécessaires.');
+    } else {
+      alert('Erreur : Impossible d\'attribuer le rôle.');
+    }
+  }
+}
+
+loadUsers() {
+  this.http.get<any[]>(
+    `${this.apiUrl}/api/admin/users`,
+    this.getHttpOptions()
+  ).subscribe({
+    next: (data) => {
+      console.log('Utilisateurs chargés avec succès:', data);
+      this.users = data;
+    },
+    error: (error) => {
+      console.error('Erreur lors du chargement des utilisateurs:', error);
+    }
+  });
+}
 
 
 }

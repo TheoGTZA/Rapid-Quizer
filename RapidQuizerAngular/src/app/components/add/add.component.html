@@ -12,41 +12,64 @@
   </div>
 </div>
 
-
+<div *ngIf="canCreateCategory" class="assign-role">
+  <h3>Attribuer un rôle</h3>
+  <div class="form-group">
+    <select #userInput>
+      <option *ngFor="let user of users" [value]="user.email">
+        {{ user.email }}
+      </option>
+    </select>
+    <select #roleInput>
+      <option value="USER">USER</option>
+      <option value="ADMIN">ADMIN</option>
+      <option value="CONTRIBUTOR">CONTRIBUTOR</option>
+    </select>
+    <button (click)="assignRole(userInput.value, roleInput.value)">
+      Attribuer le rôle
+    </button>
+  </div>
+</div>
 <div class="horizontal-line"></div>
-
 
 <div class="file-container">
   @if (!file) {
-    <input type="file" (change)="getFile($event)" class="file" />
-    <i class="fa fa-upload" aria-hidden="true"></i>
-    @if (fileError) {
-      <div class="error-message">{{ fileError }}</div>
-    } } @if (file) {
+  <input type="file" (change)="getFile($event)" class="file" />
+  <i class="fa fa-upload" aria-hidden="true"></i>
+  @if (fileError) {
+  <div class="error-message">{{ fileError }}</div>
+  } } @if (file) {
   <div>
     File name: {{ file?.name }}
     <br />
     <button (click)="file = undefined">clear file</button>
   </div>
-}
+  }
 </div>
 
 <div class="file-zone">
   <div class="question-type" *ngIf="canChooseQuestionType">
     <label>
-      <input class="checkbox" type="checkbox" [(ngModel)]="newData.isPersonal" name="isPersonal" [checked]="true"/>
+      <input
+        class="checkbox"
+        type="checkbox"
+        [(ngModel)]="newData.isPersonal"
+        name="isPersonal"
+        [checked]="true"
+      />
       Question personnelle
     </label>
   </div>
   <select class="choice-category" [(ngModel)]="selectedCategory">
     @for (category of categories; track category.id) {
-      <option [value]="category.id">{{ category.name }}</option>
+    <option [value]="category.id">{{ category.name }}</option>
     }
   </select>
 </div>
 
 <div class="button">
-  <button (click)="uploadFile()" class="button-upload">Envoyer
+  <button (click)="uploadFile()" class="button-upload">
+    Envoyer
     <svg class="button-upload-icon" viewBox="0 0 24 24" fill="currentColor">
       <path
         fill-rule="evenodd"
@@ -59,9 +82,7 @@
   </button>
 </div>
 
-
 <div class="horizontal-line"></div>
-
 
 <div class="createDatas">
   <div class="createQuestion">
@@ -92,24 +113,31 @@
     </div>
   </div>
 </div>
-<br/>
+<br />
 
 <div class="file-zone">
   <div class="question-type" *ngIf="canChooseQuestionType">
     <label>
-      <input class="checkbox" type="checkbox" [(ngModel)]="newData.isPersonal" name="isPersonal" [checked]="true"/>
+      <input
+        class="checkbox"
+        type="checkbox"
+        [(ngModel)]="newData.isPersonal"
+        name="isPersonal"
+        [checked]="true"
+      />
       Question personnelle
     </label>
   </div>
   <select class="choice-category" [(ngModel)]="selectedCategory">
     @for (category of categories; track category.id) {
-      <option [value]="category.id">{{ category.name }}</option>
+    <option [value]="category.id">{{ category.name }}</option>
     }
   </select>
 </div>
 
 <div class="button">
-  <button (click)="uploadQuestionAnswers()" class="button-upload">Envoyer
+  <button (click)="uploadQuestionAnswers()" class="button-upload">
+    Envoyer
     <svg class="button-upload-icon" viewBox="0 0 24 24" fill="currentColor">
       <path
         fill-rule="evenodd"
@@ -122,4 +150,4 @@
   </button>
 </div>
 
-<br/><br/><br/><br/><br/>
+<br /><br /><br /><br /><br />
