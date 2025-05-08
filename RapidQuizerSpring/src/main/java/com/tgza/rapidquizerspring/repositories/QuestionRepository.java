@@ -11,6 +11,6 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
     List<Question> findByCategoryIdAndIsPersonal(Long categoryId, boolean isPersonal);
 
     List<Question> findByIsPersonal(boolean isPersonal);
-    List<Question> findByCreator(Optional<User> creator);
-    List<Question> findByCategoryIdAndCreator(Long categoryId, Optional<User> creator);
+    List<Question> findByCreatorAndIsPersonal(Optional<User> creator, boolean isPersonal);
+    List<Question> findByCategoryIdAndCreatorAndIsPersonal(Long categoryId, Optional<User> creator, boolean isPersonal);
 }

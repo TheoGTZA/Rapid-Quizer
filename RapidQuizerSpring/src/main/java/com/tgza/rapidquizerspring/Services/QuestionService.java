@@ -1,4 +1,4 @@
-package com.tgza.rapidquizerspring.Services;
+package com.tgza.rapidquizerspring.services;
 
 import com.tgza.rapidquizerspring.entities.Question;
 import com.tgza.rapidquizerspring.entities.User;
@@ -33,7 +33,7 @@ public class QuestionService {
     }
 
     public List<Question> getQuestionsByCreator(User creator) {
-        return questionRepository.findByCreator(Optional.ofNullable(creator));
+        return questionRepository.findByCreatorAndIsPersonal(Optional.ofNullable(creator), true);
     }
 
 }

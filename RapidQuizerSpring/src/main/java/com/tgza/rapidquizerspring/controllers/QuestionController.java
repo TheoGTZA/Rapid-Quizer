@@ -1,6 +1,6 @@
 package com.tgza.rapidquizerspring.controllers;
 
-import com.tgza.rapidquizerspring.Services.QuestionService;
+import com.tgza.rapidquizerspring.services.QuestionService;
 import com.tgza.rapidquizerspring.entities.CustomUserDetails;
 import com.tgza.rapidquizerspring.entities.Question;
 import com.tgza.rapidquizerspring.entities.User;
@@ -34,6 +34,8 @@ public class QuestionController {
 
     @GetMapping("/category/{categoryId}/public")
     public List<Question> getQuestionsByCategoryPublic(@PathVariable Long categoryId) {
+        List<Question> testt = questionRepository.findByCategoryIdAndIsPersonal(categoryId, false);
+        System.out.println(testt);
         return questionRepository.findByCategoryIdAndIsPersonal(categoryId, false);
     }
 
@@ -41,7 +43,7 @@ public class QuestionController {
     @PreAuthorize("hasAnyAuthority('USER', 'CONTRIBUTOR', 'ADMIN')")
     public List<Question> getQuestionsByCategoryPersonal(@PathVariable Long categoryId, @PathVariable Long id) {
         Optional<User> creator = userRepository.findById(id);
-        return questionRepository.findByCategoryIdAndCreator(categoryId, creator);
+        return questionRepository.findByCategoryIdAndCreatorAndIsPersonal(categoryId, creator, true);
     }
 
     @GetMapping("/{id}")
@@ -55,7 +57,7 @@ public class QuestionController {
     public List<Question> getPersonalQuestions(@PathVariable Long id) {
         Optional<User> creator = userRepository.findById(id);
 
-        return questionRepository.findByCreator(creator);
+        return questionRepository.findByCreatorAndIsPersonal(creator, true);
     }
 
     @PostMapping

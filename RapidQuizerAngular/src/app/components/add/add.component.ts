@@ -5,6 +5,7 @@ import { Category } from '../../models/category';
 import { firstValueFrom } from 'rxjs';
 import {CommonModule, NgForOf} from '@angular/common';
 import { AuthService } from '../../auth/services/auth.service';
+
 @Component({
   selector: 'app-add',
   templateUrl: './add.component.html',
@@ -24,6 +25,7 @@ export class AddComponent {
   canCreateCategory: boolean = false;
   private apiUrl = 'http://localhost:8080';
 
+
   private getHttpOptions() {
     return {
       headers: new HttpHeaders({
@@ -33,7 +35,6 @@ export class AddComponent {
       })
     };
   }
-
 
   constructor(private http: HttpClient, private authService: AuthService) {
     this.updateNbInputs();
@@ -159,7 +160,7 @@ export class AddComponent {
       );
 
       console.log('Category created successfully:', result);
-      await this.loadCategories();
+      this.loadCategories();
       this.newCategory = { name: '', parentId: null };
     } catch (error: any) {
       console.error('Error creating category:', error);
