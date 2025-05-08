@@ -97,7 +97,7 @@ export class PanierComponent implements OnInit, AfterViewInit {
     \\usepackage{amsmath,amssymb}\n\\usepackage{color}\n\\usepackage{graphicx}\n
     %rajouter completemulti pour compléter les questions multiples avec "Aucune de ces réponses"
     \\usepackage[francais,bloc]{automultiplechoice}\n\\usepackage{tikz}\n\\usepackage{hyperref}\n\\usepackage{ulem} % strike text
-    % fp is needed by AMC for numerical question with float. Need to be commented for amc2moodle usage (fp is not yet supported)
+    % fp est nécessaire par AMC pour des questions numériques avec un float. Doit être commenté pour amc2moodle (fp n'est pas encore supporté)
     \\usepackage{fp}\n\\def\\multiSymbole{}\n
     % -----------------------::== newcommand ==::--------------------------\n\\newcommand{\\feedback}[1]{}
     \\usepackage{mathrsfs}\n\\usepackage{textcomp}\n\n\n\n\n`;
