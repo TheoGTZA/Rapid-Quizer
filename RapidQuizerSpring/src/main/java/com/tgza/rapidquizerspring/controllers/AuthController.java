@@ -1,6 +1,6 @@
 package com.tgza.rapidquizerspring.controllers;
 
-import com.tgza.rapidquizerspring.Services.UserService;
+import com.tgza.rapidquizerspring.services.UserService;
 import com.tgza.rapidquizerspring.entities.User;
 import com.tgza.rapidquizerspring.enums.Role;
 import com.tgza.rapidquizerspring.exceptions.EmailAlreadyUsedException;

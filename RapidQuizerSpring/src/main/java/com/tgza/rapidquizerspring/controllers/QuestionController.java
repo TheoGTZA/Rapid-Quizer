@@ -34,8 +34,6 @@ public class QuestionController {
 
     @GetMapping("/category/{categoryId}/public")
     public List<Question> getQuestionsByCategoryPublic(@PathVariable Long categoryId) {
-        List<Question> testt = questionRepository.findByCategoryIdAndIsPersonal(categoryId, false);
-        System.out.println(testt);
         return questionRepository.findByCategoryIdAndIsPersonal(categoryId, false);
     }
 

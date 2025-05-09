@@ -1,4 +1,4 @@
-package com.tgza.rapidquizerspring.Services;
+package com.tgza.rapidquizerspring.services;
 
 import com.tgza.rapidquizerspring.entities.User;
 import com.tgza.rapidquizerspring.enums.Role;
